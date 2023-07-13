@@ -1,0 +1,41 @@
+@import './vars.scss';
+
+.switch {
+  background-color: rgba(255, 255, 255, 0.1);
+  height: 30px;
+  aspect-ratio: 1.85/1;
+  appearance: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: $transition;
+  position: relative;
+
+  &:checked {
+    background-color: $accent;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 15px;
+    background-color: white;
+    transition: $transition;
+    scale: 0.7;
+  }
+
+  &:checked::before {
+    left: 45%;
+  }
+
+  &:hover::before {
+    scale: 0.75;
+  }
+
+  &:active::before {
+    scale: 0.7;
+  }
+}

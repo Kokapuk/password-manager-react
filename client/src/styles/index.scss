@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import './vars.scss';
+
+* {
+  padding: 0;
+  margin: 0;
+  outline: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100vh;
+  user-select: none;
+}
+
+#root {
+  background-color: $bg-dark;
+
+  @media screen and (width >= 1024px) {
+    padding: 50px 250px;
+  }
+
+  @media screen and (width < 1024px) {
+    padding: 25px 75px;
+  }
+
+  @media screen and (width <= 767px) {
+    padding: 25px;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
+::selection {
+  background-color: rgba(23, 92, 220, 0.65);
+}

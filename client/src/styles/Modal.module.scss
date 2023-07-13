@@ -1,0 +1,84 @@
+@import './vars.scss';
+
+.background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: $transition;
+  padding: 0 25px;
+
+  &__hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: $bg;
+  border-radius: $border-radius-large;
+  padding: 25px;
+  transition: $transition;
+  max-height: 80vh;
+
+  @media screen and (width > 767px) {
+    min-width: 500px;
+  }
+
+  @media screen and (width <= 767px) {
+    width: 100%;
+  }
+
+  &__hidden {
+    scale: 0.95;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 25px;
+  margin-bottom: 25px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+
+  &__button {
+    background-color: transparent !important;
+    font-size: 24px !important;
+    color: rgba(255, 255, 255, 0.65);
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-bottom: 25px;
+  margin-bottom: 25px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+  padding-right: 10px;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.footer {
+  display: flex;
+  justify-content: end;
+  gap: 10px;
+
+  &__button {
+    padding: 8px 13px !important;
+
+    &_secondary {
+      background-color: rgba(255, 255, 255, 0.065) !important;
+    }
+  }
+}
