@@ -10,6 +10,7 @@ import {
 import styles from '../styles/Field.module.scss';
 import { FieldDTO } from '../utils/types';
 import Button from './Button';
+import generatePassword from '../utils/generatePassword';
 
 interface Props {
   field: FieldDTO;
@@ -39,7 +40,7 @@ const Field = ({ field, readOnly, onInput, onToggleShow, onDelete, onBlur, websi
             <Button onClick={onDelete} className={styles.buttons__button}>
               <HiMiniTrash />
             </Button>
-            <Button onClick={() => onInput('{randomGeneratedPassword}')} className={styles.buttons__button}>
+            <Button onClick={() => onInput(generatePassword())} className={styles.buttons__button}>
               <HiMiniArrowPath />
             </Button>
           </>

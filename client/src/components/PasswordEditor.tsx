@@ -206,9 +206,9 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
               key={isEditing ? 'cancel' : 'close'}
               timeout={200}
               classNames={{
-                enter: styles['close_enter'],
+                enter: styles.close_enter,
                 enterActive: styles['close_enter-active'],
-                exit: styles['close_exit'],
+                exit: styles.close_exit,
                 exitActive: styles['close_exit-active'],
               }}>
               {isEditing ? (
