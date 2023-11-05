@@ -27,7 +27,7 @@ export default () => {
         setFetching(false);
       }
     })();
-  }, [fetching, query, auth.token]);
+  }, [fetching, query, auth.token, page]);
 
   const update = () => {
     setPasswords([]);

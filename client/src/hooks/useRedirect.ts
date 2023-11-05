@@ -1,19 +1,19 @@
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../app/store';
-import { useEffect } from 'react';
 
-export default (access: 'Auth' | 'NoAuth') => {
+export default (access: 'AuthOnly' | 'NoAuthOnly') => {
   const auth = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (access === 'Auth' && !auth.token) {
+    if (access === 'AuthOnly' && !auth.token) {
       navigate('/signIn');
     }
 
-    if (access === 'NoAuth' && auth.token) {
+    if (access === 'NoAuthOnly' && auth.token) {
       navigate('/');
     }
-  }, [auth.token]);
+  }, [access, auth.token, navigate]);
 };

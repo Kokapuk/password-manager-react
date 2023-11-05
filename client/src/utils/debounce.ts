@@ -1,11 +1,9 @@
-export default (func: (args: any) => any, timeout: number) => {
-  let timer: number;
+export default <T, F>(func: (args: T) => F, timeout: number) => {
+  let timer: NodeJS.Timeout;
 
-  return (...args: any[]) => {
+  return (args: T) => {
     clearTimeout(timer);
 
-    timer = setTimeout(() => {
-      func.apply(null, args as [args: any]);
-    }, timeout);
+    timer = setTimeout(() => func(args), timeout);
   };
 };

@@ -1,0 +1,49 @@
+@import 'src/styles/vars';
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @media screen and (width > 767px) {
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media screen and (width <= 767px) {
+    width: 100%;
+  }
+
+  &_full-width {
+    margin: 0;
+    width: 100%;
+  }
+
+  &__error {
+    color: $danger;
+    font-size: 14px;
+
+    &_enter {
+      opacity: 0;
+      margin-bottom: -37px;
+    }
+
+    &_enter-active {
+      opacity: 1;
+      margin-bottom: 0;
+      transition: $transition;
+    }
+
+    &_exit {
+      opacity: 1;
+      margin-bottom: 0;
+    }
+
+    &_exit-active {
+      opacity: 0;
+      margin-bottom: -37px;
+      transition: $transition;
+    }
+  }
+}
