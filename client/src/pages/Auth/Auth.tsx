@@ -21,7 +21,7 @@ const Auth = ({ authType }: Props) => {
     password: '',
   });
   const [isLoading, setLoading] = useState(false);
-  useRedirect('NoAuthOnly');
+  useRedirect('noAuthOnly');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

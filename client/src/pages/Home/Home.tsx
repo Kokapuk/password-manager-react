@@ -1,51 +1,23 @@
-import { useEffect, useRef, useState } from 'react';
-import { HiMiniGlobeAlt, HiMiniLockClosed } from 'react-icons/hi2';
+import { useEffect, useState } from 'react';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
-import Modal from '../../components/Modal';
+import CreatePasswordModal from '../../components/CreatePasswordModal';
 import PasswordEditor from '../../components/PasswordEditor';
 import PasswordList from '../../components/PasswordList';
 import SearchVault from '../../components/SearchVault';
-import TextInput from '../../components/TextInput';
-import usePasswords from '../../hooks/usePasswords';
 import useRedirect from '../../hooks/useRedirect';
-import api from '../../utils/api';
-import simplifyUrl from '../../utils/simplifyUrl';
 import { Password } from '../../utils/types';
 import styles from './Home.module.scss';
+import usePasswordsStore from '../../store/passwords';
 
 const Home = () => {
-  const { passwords, fetching, totalCount, update, search, paginate } = usePasswords();
-  const [query, setQuery] = useState('');
   const [selectedPassword, setSelectedPassword] = useState<Password | null>(null);
-  const [showCreatePasswordModal, setShowCreatePasswordModal] = useState(false);
-  const [newPasswordInfo, setNewPasswordInfo] = useState<{ name: string; website: string }>({ name: '', website: '' });
-  const [creatingPassword, setCreatingPassword] = useState(false);
-  const newPasswordInput = useRef<HTMLInputElement>(null);
-  useRedirect('AuthOnly');
+  const [isCreatePasswordModalOpen, setCreatePasswordModalOpen] = useState(false);
+  const fetchPasswords = usePasswordsStore((state) => state.fetch);
+  useRedirect('authOnly');
 
   useEffect(() => {
-    if (showCreatePasswordModal && newPasswordInput.current) {
-      newPasswordInput.current.focus();
-    }
-  }, [showCreatePasswordModal]);
-
-  const createPassword = async () => {
-    if (!newPasswordInfo.name.trim() || !newPasswordInfo.website.trim()) {
-      return;
-    }
-
-    setCreatingPassword(true);
-
-    try {
-      const newPassword = await api.create(newPasswordInfo.name, newPasswordInfo.website);
-      update();
-      setShowCreatePasswordModal(false);
-      setSelectedPassword(newPassword);
-    } finally {
-      setCreatingPassword(false);
-      setNewPasswordInfo({ name: '', website: '' });
-    }
-  };
+    fetchPasswords(undefined, undefined, true);
+  }, [fetchPasswords]);
 
   return (
     <>
@@ -62,26 +34,12 @@ const Home = () => {
         >
           <div className={styles.container}>
             {selectedPassword ? (
-              <PasswordEditor
-                onUpdateRequest={update}
-                onClose={() => setSelectedPassword(null)}
-                onPasswordSelect={(password) => setSelectedPassword(password)}
-                password={selectedPassword}
-              />
+              <PasswordEditor onClose={() => setSelectedPassword(null)} password={selectedPassword} />
             ) : (
               <div className={styles['password-list']}>
-                <SearchVault
-                  query={query}
-                  onInput={(value) => setQuery(value)}
-                  totalCount={totalCount}
-                  onSearchRequest={search}
-                  onPasswordCreateRequest={() => setShowCreatePasswordModal(true)}
-                />
+                <SearchVault onPasswordCreateRequest={() => setCreatePasswordModalOpen(true)} />
                 <PasswordList
                   selectedPassword={selectedPassword}
-                  onPaginationRequest={paginate}
-                  passwords={passwords}
-                  fetching={fetching}
                   onPasswordSelect={(password) => setSelectedPassword(password)}
                 />
               </div>
@@ -89,27 +47,11 @@ const Home = () => {
           </div>
         </CSSTransition>
       </SwitchTransition>
-
-      <Modal
-        title="Create password"
-        show={showCreatePasswordModal}
-        onCloseRequest={() => setShowCreatePasswordModal(false)}
-        buttons={[{ title: 'Create', onClick: createPassword, loading: creatingPassword }]}
-      >
-        <TextInput
-          ref={newPasswordInput}
-          value={newPasswordInfo.name}
-          onChange={(e) => setNewPasswordInfo((prev) => ({ ...prev, name: e.target.value.trimStart() }))}
-          icon={<HiMiniLockClosed />}
-          placeholder="Name"
-        />
-        <TextInput
-          value={newPasswordInfo.website}
-          onChange={(e) => setNewPasswordInfo((prev) => ({ ...prev, website: simplifyUrl(e.target.value) }))}
-          icon={<HiMiniGlobeAlt />}
-          placeholder="Website"
-        />
-      </Modal>
+      <CreatePasswordModal
+        isOpen={isCreatePasswordModalOpen}
+        close={() => setCreatePasswordModalOpen(false)}
+        onSelect={setSelectedPassword}
+      />
     </>
   );
 };

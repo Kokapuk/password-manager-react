@@ -1,32 +1,36 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { HiMiniMagnifyingGlass, HiMiniPlus, HiMiniXMark } from 'react-icons/hi2';
 import { CSSTransition } from 'react-transition-group';
+import usePasswordsStore from '../../store/passwords';
 import debounce from '../../utils/debounce';
 import Button from '../Button';
 import TextInput from '../TextInput';
 import styles from './SearchVault.module.scss';
 
 interface Props {
-  query: string;
-  onInput(value: string): void;
-  totalCount: number;
-  onSearchRequest(query: string): void;
   onPasswordCreateRequest?(): void;
   noButtons?: boolean;
 }
 
-const SearchVault = ({ query, onInput, totalCount, onSearchRequest, onPasswordCreateRequest, noButtons }: Props) => {
+const SearchVault = ({ onPasswordCreateRequest, noButtons }: Props) => {
+  const [query, setQuery] = useState('');
+  const { fetch: fetchPasswords, totalCount } = usePasswordsStore();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const requestSearch = useCallback(debounce(onSearchRequest, 250), []);
+  const fetchPasswordsWithQuery = useCallback(
+    debounce((query: string) => fetchPasswords(query), 250),
+    []
+  );
+
+  useEffect(() => {
+    fetchPasswordsWithQuery(query);
+  }, [fetchPasswordsWithQuery, query]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onInput(event.target.value);
-    requestSearch(event.target.value);
+    setQuery(event.currentTarget.value);
   };
 
   const handleClear = () => {
-    onInput('');
-    requestSearch('');
+    setQuery('');
   };
 
   return (

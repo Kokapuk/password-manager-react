@@ -1,7 +1,5 @@
 import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { store } from './app/store';
 import Auth from './pages/Auth/Auth';
 import Home from './pages/Home/Home';
 import './styles/index.scss';
@@ -15,8 +13,4 @@ const router = createBrowserRouter([
   { path: '/', element: <Home /> },
 ]);
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <Provider store={store}>
-    <RouterProvider router={router} />
-  </Provider>
-);
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<RouterProvider router={router} />);

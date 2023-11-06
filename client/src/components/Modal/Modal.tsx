@@ -6,14 +6,14 @@ import Button, { ButtonProps } from '../Button';
 import styles from './Modal.module.scss';
 
 interface Props {
-  show: boolean;
+  isOpen: boolean;
   title: string;
   children: ReactNode;
-  onCloseRequest?(): void;
+  close?(): void;
   buttons?: ({ title: string; secondary?: boolean } & ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>)[];
 }
 
-const Modal = ({ show, title, children, onCloseRequest, buttons }: Props) => {
+const Modal = ({ isOpen: show, title, children, close: onCloseRequest, buttons }: Props) => {
   return createPortal(
     <div className={classNames(styles.background, !show && styles.background__hidden)}>
       <div className={classNames(styles.container, !show && styles.container__hidden)}>

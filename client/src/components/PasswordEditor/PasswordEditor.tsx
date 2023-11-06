@@ -12,7 +12,7 @@ import {
   HiMiniXMark,
 } from 'react-icons/hi2';
 import { CSSTransition, SwitchTransition, TransitionGroup } from 'react-transition-group';
-import usePasswords from '../../hooks/usePasswords';
+import usePasswordsStore from '../../store/passwords';
 import api from '../../utils/api';
 import simplifyUrl from '../../utils/simplifyUrl';
 import { Field as FieldType, Password as PasswordType } from '../../utils/types';
@@ -29,11 +29,9 @@ import styles from './PasswordEditor.module.scss';
 interface Props {
   password: PasswordType | null;
   onClose(): void;
-  onUpdateRequest(): void;
-  onPasswordSelect?(password: PasswordType): void;
 }
 
-const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, onPasswordSelect }: Props) => {
+const PasswordEditor = ({ password: initialPassword, onClose }: Props) => {
   const [password, setPassword] = useState<PasswordType>(JSON.parse(JSON.stringify(initialPassword)));
   const [website, setWebsite] = useState(password.website);
   const [isEditing, setEditing] = useState(false);
@@ -41,10 +39,9 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
   const [showNewFieldModal, setShowNewFieldModal] = useState(false);
   const [newFieldTitle, setNewFieldTitle] = useState('');
   const newFieldInput = useRef<HTMLInputElement>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showSelectIntegration, setShowSelectIntegration] = useState(false);
-  const { passwords, fetching, totalCount, search, paginate } = usePasswords();
-  const [query, setQuery] = useState('');
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isIntegrationSelectModalOpen, setIntegrationSelectModalOpen] = useState(false);
+  const fetchPasswords = usePasswordsStore((state) => state.fetch);
 
   useEffect(() => {
     if (!initialPassword) {
@@ -118,10 +115,8 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
       const prevState: PasswordType = JSON.parse(JSON.stringify(prev));
 
       if (!prevState.credentials.fields) {
-        prevState.credentials = { fields: [] };
+        prevState.credentials.fields = [];
       }
-
-      prevState.credentials = { fields: prevState.credentials.fields };
 
       const field: FieldType = {
         _id: new Types.ObjectId().toString(),
@@ -129,7 +124,7 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
         isPassword: newFieldTitle.toLocaleLowerCase().includes('password'),
         value: '',
       };
-      prevState.credentials.fields?.push(field);
+      prevState.credentials.fields.push(field);
       return prevState;
     });
 
@@ -137,19 +132,15 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
     setShowNewFieldModal(false);
   };
 
-  const handleIntegrationSelect = (integration: PasswordType) => {
-    if (integration._id === password._id) {
-      return;
-    }
-
+  const handleIntegrationSelect = (integration: PasswordType | undefined) => {
     setPassword((prev) => {
       const prevState: PasswordType = JSON.parse(JSON.stringify(prev));
 
-      prevState.credentials = { integration: integration };
+      prevState.credentials.integration = integration;
       return prevState;
     });
 
-    setShowSelectIntegration(false);
+    setIntegrationSelectModalOpen(false);
   };
 
   const savePassword = async () => {
@@ -166,7 +157,7 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
         credentials: password.credentials,
         website: password.website,
       });
-      onUpdateRequest();
+      fetchPasswords();
     } finally {
       setEditing(false);
       setLoading(false);
@@ -174,13 +165,13 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
   };
 
   const removePassword = async () => {
-    setShowDeleteModal(false);
+    setDeleteModalOpen(false);
     setLoading(true);
 
     try {
       await api.remove(password._id);
       onClose();
-      onUpdateRequest();
+      fetchPasswords();
     } finally {
       setEditing(false);
       setLoading(false);
@@ -219,7 +210,7 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
               </Button>
             </CSSTransition>
           </SwitchTransition>
-          <Button loading={isLoading} onClick={() => setShowDeleteModal(true)} className={styles.header__button}>
+          <Button loading={isLoading} onClick={() => setDeleteModalOpen(true)} className={styles.header__button}>
             <HiMiniTrash /> Delete
           </Button>
 
@@ -271,7 +262,7 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
           unmountOnExit
         >
           <div className={styles.title__buttons}>
-            <Button onClick={() => setShowSelectIntegration(true)} className={styles.title__buttons__button}>
+            <Button onClick={() => setIntegrationSelectModalOpen(true)} className={styles.title__buttons__button}>
               <HiMiniLink />
             </Button>
             <Button onClick={() => setShowNewFieldModal(true)} className={styles.title__buttons__button}>
@@ -307,15 +298,8 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
             <>
               <h4>Integration</h4>
               <Password
-                onClick={
-                  isEditing
-                    ? () => setShowSelectIntegration(true)
-                    : onPasswordSelect
-                    ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                      () => onPasswordSelect(password.credentials.integration!)
-                    : undefined
-                }
-                password={password.credentials.integration}
+                onClick={() => setIntegrationSelectModalOpen(true)}
+                password={password.credentials.integration as PasswordType}
               />
             </>
           )}
@@ -335,8 +319,8 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
       </TransitionGroup>
 
       <Modal
-        onCloseRequest={() => setShowNewFieldModal(false)}
-        show={showNewFieldModal}
+        close={() => setShowNewFieldModal(false)}
+        isOpen={showNewFieldModal}
         title="Create new field"
         buttons={[{ title: 'Create', onClick: createField }]}
       >
@@ -351,12 +335,12 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
       </Modal>
 
       <Modal
-        onCloseRequest={() => setShowDeleteModal(false)}
-        show={showDeleteModal}
+        close={() => setDeleteModalOpen(false)}
+        isOpen={isDeleteModalOpen}
         title="Confirm action"
         buttons={[
           { title: 'Yes', onClick: removePassword, secondary: true },
-          { title: 'No', onClick: () => setShowDeleteModal(false) },
+          { title: 'No', onClick: () => setDeleteModalOpen(false) },
         ]}
       >
         <p>
@@ -364,25 +348,15 @@ const PasswordEditor = ({ password: initialPassword, onClose, onUpdateRequest, o
         </p>
       </Modal>
 
-      <Modal
-        onCloseRequest={() => setShowSelectIntegration(false)}
-        show={showSelectIntegration}
-        title="Select integration"
-      >
-        <SearchVault
-          query={query}
-          onInput={(value) => setQuery(value)}
-          totalCount={totalCount}
-          onSearchRequest={search}
-          noButtons
-        />
-        <PasswordList
-          onPaginationRequest={paginate}
-          passwords={passwords}
-          fetching={fetching}
-          selectedPassword={password.credentials.integration}
-          onPasswordSelect={handleIntegrationSelect}
-        />
+      <Modal close={() => setIntegrationSelectModalOpen(false)} isOpen={isIntegrationSelectModalOpen} title="Select integration">
+        <SearchVault noButtons />
+        {isIntegrationSelectModalOpen && (
+          <PasswordList
+            selectedPassword={password.credentials.integration}
+            onPasswordSelect={handleIntegrationSelect}
+            filter={(item) => item._id !== password._id}
+          />
+        )}
       </Modal>
     </div>
   );

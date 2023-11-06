@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { store } from '../app/store';
-import { setToken as setAuthToken } from '../features/auth/authSlice';
+import useAuthStore from '../store/auth';
 import { AuthType, Password, PasswordDTO } from './types';
 
 const api = axios.create({ baseURL: import.meta.env.VITE_API_URL });
@@ -17,7 +16,7 @@ api.interceptors.response.use(
 );
 
 export const setToken = (token: string | null) => {
-  store.dispatch(setAuthToken(token));
+  useAuthStore.setState({ token });
 
   if (!token) {
     delete api.defaults.headers.common['Authorization'];
@@ -57,7 +56,11 @@ const create = async (name: string, website: string): Promise<Password> => {
   }
 };
 
-const findAll = async (query: string, limit: number, page: number): Promise<[totalCount: number, passwords: Password[]]> => {
+const findAll = async (
+  query: string,
+  limit: number,
+  page: number
+): Promise<[totalCount: number, passwords: Password[]]> => {
   try {
     const response = await api.get('/passwords', { params: { query: query !== '' ? query : null, limit, page } });
     return [Number(response.headers['x-total-count']), response.data];

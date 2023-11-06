@@ -1,19 +1,23 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import usePasswordsStore from '../../store/passwords';
 import { Password as PasswordType } from '../../utils/types';
 import Password from '../Password';
 import PasswordSkeleton from '../PasswordSkeleton';
 import styles from './PasswordList.module.scss';
 
 interface Props {
-  passwords: PasswordType[];
-  onPaginationRequest(): void;
-  fetching: boolean;
   selectedPassword?: PasswordType | null;
   onPasswordSelect?(password: PasswordType): void;
+  filter?(password: PasswordType): boolean;
 }
 
-const PasswordList = ({ passwords, onPaginationRequest, fetching, selectedPassword, onPasswordSelect }: Props) => {
+const PasswordList = ({ selectedPassword, onPasswordSelect, filter }: Props) => {
+  const { fetching, passwords, query, page, fetch: fetchPasswords } = usePasswordsStore();
   const list = useRef<HTMLDivElement>(null);
+  const filteredPasswords = useMemo(
+    () => (filter ? passwords.filter((password) => filter(password)) : passwords),
+    [filter, passwords]
+  );
 
   useEffect(() => {
     if (fetching && passwords.length === 0) {
@@ -23,13 +27,13 @@ const PasswordList = ({ passwords, onPaginationRequest, fetching, selectedPasswo
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
     if (event.currentTarget.scrollHeight - (event.currentTarget.scrollTop + event.currentTarget.clientHeight) < 100) {
-      onPaginationRequest();
+      fetchPasswords(query, page + 1);
     }
   };
 
   return (
     <div ref={list} onScroll={handleScroll} className={styles.list}>
-      {passwords.map((password) => (
+      {filteredPasswords.map((password) => (
         <Password
           selected={selectedPassword?._id === password._id}
           onClick={onPasswordSelect && (() => onPasswordSelect(password))}
@@ -38,7 +42,9 @@ const PasswordList = ({ passwords, onPaginationRequest, fetching, selectedPasswo
         />
       ))}
       {fetching && new Array(20).fill(0).map((_item, index) => <PasswordSkeleton key={index} />)}
-      {passwords.length === 0 && <p className={styles.list__empty}>Nothing yet</p>}
+      {!fetching && filteredPasswords.length === 0 && (
+        <p className={styles.list__empty}>{query ? 'Nothing found' : 'Nothing yet'}</p>
+      )}
     </div>
   );
 };
