@@ -6,12 +6,11 @@ import PasswordSkeleton from '../PasswordSkeleton';
 import styles from './PasswordList.module.scss';
 
 interface Props {
-  selectedPassword?: PasswordType | null;
   onPasswordSelect?(password: PasswordType): void;
   filter?(password: PasswordType): boolean;
 }
 
-const PasswordList = ({ selectedPassword, onPasswordSelect, filter }: Props) => {
+const PasswordList = ({ onPasswordSelect, filter }: Props) => {
   const { fetching, passwords, query, page, fetch: fetchPasswords } = usePasswordsStore();
   const list = useRef<HTMLDivElement>(null);
   const filteredPasswords = useMemo(
@@ -35,7 +34,6 @@ const PasswordList = ({ selectedPassword, onPasswordSelect, filter }: Props) => 
     <div ref={list} onScroll={handleScroll} className={styles.list}>
       {filteredPasswords.map((password) => (
         <Password
-          selected={selectedPassword?._id === password._id}
           onClick={onPasswordSelect && (() => onPasswordSelect(password))}
           key={password._id}
           password={password}
@@ -43,7 +41,7 @@ const PasswordList = ({ selectedPassword, onPasswordSelect, filter }: Props) => 
       ))}
       {fetching && new Array(20).fill(0).map((_item, index) => <PasswordSkeleton key={index} />)}
       {!fetching && filteredPasswords.length === 0 && (
-        <p className={styles.list__empty}>{query ? 'Nothing found' : 'Nothing yet'}</p>
+        <p className={styles.emptyPlaceholder}>{query ? 'Nothing found' : 'Nothing yet'}</p>
       )}
     </div>
   );

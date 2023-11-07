@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import cn from 'classnames';
 import {
   HiMiniArrowPath,
   HiMiniArrowTopRightOnSquare,
@@ -24,7 +24,7 @@ interface Props {
 
 const Field = ({ field, readOnly, onInput, onToggleShow, onDelete, onBlur, website }: Props) => {
   return (
-    <div className={classNames(styles.container)}>
+    <div className={cn(styles.container)}>
       <p className={styles.title}>{field.title}</p>
       <input
         onBlur={onBlur}

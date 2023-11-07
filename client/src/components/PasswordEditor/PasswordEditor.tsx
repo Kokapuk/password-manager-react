@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { Types } from 'mongoose';
 import { useEffect, useRef, useState } from 'react';
 import { IconContext } from 'react-icons';
@@ -11,7 +10,7 @@ import {
   HiMiniTrash,
   HiMiniXMark,
 } from 'react-icons/hi2';
-import { CSSTransition, SwitchTransition, TransitionGroup } from 'react-transition-group';
+import useEditorStore from '../../store/editor';
 import usePasswordsStore from '../../store/passwords';
 import api from '../../utils/api';
 import simplifyUrl from '../../utils/simplifyUrl';
@@ -22,16 +21,13 @@ import Field from '../Field';
 import Modal from '../Modal';
 import Password from '../Password';
 import PasswordList from '../PasswordList';
+import PasswordSkeleton from '../PasswordSkeleton';
 import SearchVault from '../SearchVault';
 import TextInput from '../TextInput';
 import styles from './PasswordEditor.module.scss';
 
-interface Props {
-  password: PasswordType | null;
-  onClose(): void;
-}
-
-const PasswordEditor = ({ password: initialPassword, onClose }: Props) => {
+const PasswordEditor = () => {
+  const { selectedPassword: initialPassword, setSelectedPassword } = useEditorStore();
   const [password, setPassword] = useState<PasswordType>(JSON.parse(JSON.stringify(initialPassword)));
   const [website, setWebsite] = useState(password.website);
   const [isEditing, setEditing] = useState(false);
@@ -170,7 +166,7 @@ const PasswordEditor = ({ password: initialPassword, onClose }: Props) => {
 
     try {
       await api.remove(password._id);
-      onClose();
+      setSelectedPassword(null);
       fetchPasswords();
     } finally {
       setEditing(false);
@@ -181,61 +177,28 @@ const PasswordEditor = ({ password: initialPassword, onClose }: Props) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <IconContext.Provider value={{ className: styles.header__button__icon }}>
-          <SwitchTransition>
-            <CSSTransition
-              key={isEditing ? 'save' : 'edit'}
-              timeout={200}
-              classNames={{
-                enter: styles['edit_enter'],
-                enterActive: styles['edit_enter-active'],
-                exit: styles['edit_exit'],
-                exitActive: styles['edit_exit-active'],
-              }}
-            >
-              <Button
-                loading={isLoading}
-                onClick={() => (isEditing ? savePassword() : setEditing(true))}
-                className={classNames(styles.header__button)}
-              >
-                {isEditing ? (
-                  <>
-                    <HiMiniCheckCircle /> Save
-                  </>
-                ) : (
-                  <>
-                    <HiMiniPencil /> Edit
-                  </>
-                )}
-              </Button>
-            </CSSTransition>
-          </SwitchTransition>
-          <Button loading={isLoading} onClick={() => setDeleteModalOpen(true)} className={styles.header__button}>
+        <IconContext.Provider value={{ className: styles.icon }}>
+          {isEditing ? (
+            <Button loading={isLoading} onClick={savePassword} className={styles.button}>
+              <HiMiniCheckCircle /> Save
+            </Button>
+          ) : (
+            <Button loading={isLoading} onClick={() => setEditing(true)} className={styles.button}>
+              <HiMiniPencil /> Edit
+            </Button>
+          )}
+          <Button loading={isLoading} onClick={() => setDeleteModalOpen(true)} className={styles.button}>
             <HiMiniTrash /> Delete
           </Button>
-
-          <SwitchTransition>
-            <CSSTransition
-              key={isEditing ? 'cancel' : 'close'}
-              timeout={200}
-              classNames={{
-                enter: styles.close_enter,
-                enterActive: styles['close_enter-active'],
-                exit: styles.close_exit,
-                exitActive: styles['close_exit-active'],
-              }}
-            >
-              {isEditing ? (
-                <Button onClick={onCancel} className={styles.header__button}>
-                  <HiMiniXMark /> Cancel
-                </Button>
-              ) : (
-                <Button onClick={onClose} className={styles.header__button}>
-                  <HiMiniXMark /> Close
-                </Button>
-              )}
-            </CSSTransition>
-          </SwitchTransition>
+          {isEditing ? (
+            <Button onClick={onCancel} className={styles.button}>
+              <HiMiniXMark /> Cancel
+            </Button>
+          ) : (
+            <Button onClick={() => setSelectedPassword(null)} className={styles.button}>
+              <HiMiniXMark /> Close
+            </Button>
+          )}
         </IconContext.Provider>
       </div>
 
@@ -245,60 +208,42 @@ const PasswordEditor = ({ password: initialPassword, onClose }: Props) => {
           value={password.name}
           onChange={(e) => setPassword((prev) => ({ ...prev, name: e.target.value }))}
           placeholder="Title"
-          className={styles.title__input}
+          className={styles.input}
           readOnly={!isEditing}
         />
-        <CSSTransition
-          in={isEditing}
-          timeout={200}
-          classNames={{
-            appear: styles.title__buttons_enter,
-            appearActive: styles['title__buttons_enter-active'],
-            enter: styles.title__buttons_enter,
-            enterActive: styles['title__buttons_enter-active'],
-            exit: styles.title__buttons_exit,
-            exitActive: styles['title__buttons_exit-active'],
-          }}
-          unmountOnExit
-        >
-          <div className={styles.title__buttons}>
-            <Button onClick={() => setIntegrationSelectModalOpen(true)} className={styles.title__buttons__button}>
+        {isEditing && (
+          <div className={styles.buttons}>
+            <Button onClick={() => setIntegrationSelectModalOpen(true)} className={styles.button}>
               <HiMiniLink />
             </Button>
-            <Button onClick={() => setShowNewFieldModal(true)} className={styles.title__buttons__button}>
+            <Button onClick={() => setShowNewFieldModal(true)} className={styles.button}>
               <HiMiniPlus />
             </Button>
           </div>
-        </CSSTransition>
+        )}
       </div>
 
-      <TransitionGroup className={styles['field-list']}>
+      <div className={styles.fieldList}>
         {password.credentials.fields?.map((field) => (
-          <CSSTransition
-            classNames={{
-              enter: styles['password_enter'],
-              enterActive: styles['password_enter-active'],
-              exit: styles['password_exit'],
-              exitActive: styles['password_exit-active'],
-            }}
-            timeout={200}
+          <Field
             key={field._id}
-          >
-            <Field
-              onInput={(value) => handleFieldInput(field._id, value)}
-              onToggleShow={() => handleFieldToggleShow(field._id)}
-              onDelete={() => handleDeleteField(field._id)}
-              field={field}
-              readOnly={!isEditing}
-            />
-          </CSSTransition>
+            onInput={(value) => handleFieldInput(field._id, value)}
+            onToggleShow={() => handleFieldToggleShow(field._id)}
+            onDelete={() => handleDeleteField(field._id)}
+            field={field}
+            readOnly={!isEditing}
+          />
         ))}
         <>
           {password.credentials.integration && (
             <>
               <h4>Integration</h4>
               <Password
-                onClick={() => setIntegrationSelectModalOpen(true)}
+                onClick={() =>
+                  isEditing
+                    ? setIntegrationSelectModalOpen(true)
+                    : setSelectedPassword(password.credentials.integration as PasswordType)
+                }
                 password={password.credentials.integration as PasswordType}
               />
             </>
@@ -316,7 +261,7 @@ const PasswordEditor = ({ password: initialPassword, onClose }: Props) => {
           readOnly={!isEditing}
           field={{ title: 'Website', value: password.website, isPassword: false }}
         />
-      </TransitionGroup>
+      </div>
 
       <Modal
         close={() => setShowNewFieldModal(false)}
@@ -348,14 +293,19 @@ const PasswordEditor = ({ password: initialPassword, onClose }: Props) => {
         </p>
       </Modal>
 
-      <Modal close={() => setIntegrationSelectModalOpen(false)} isOpen={isIntegrationSelectModalOpen} title="Select integration">
+      <Modal
+        close={() => setIntegrationSelectModalOpen(false)}
+        isOpen={isIntegrationSelectModalOpen}
+        title="Select integration"
+        fullHeight
+      >
         <SearchVault noButtons />
-        {isIntegrationSelectModalOpen && (
-          <PasswordList
-            selectedPassword={password.credentials.integration}
-            onPasswordSelect={handleIntegrationSelect}
-            filter={(item) => item._id !== password._id}
-          />
+        {isIntegrationSelectModalOpen ? (
+          <PasswordList onPasswordSelect={handleIntegrationSelect} filter={(item) => item._id !== password._id} />
+        ) : (
+          Array(20)
+            .fill(0)
+            .map((_item, index) => <PasswordSkeleton key={index} />)
         )}
       </Modal>
     </div>

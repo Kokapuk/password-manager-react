@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { HiMiniMagnifyingGlass, HiMiniPlus, HiMiniXMark } from 'react-icons/hi2';
-import { CSSTransition } from 'react-transition-group';
 import usePasswordsStore from '../../store/passwords';
 import debounce from '../../utils/debounce';
 import Button from '../Button';
@@ -20,8 +19,14 @@ const SearchVault = ({ onPasswordCreateRequest, noButtons }: Props) => {
     debounce((query: string) => fetchPasswords(query), 250),
     []
   );
+  const firstRender = useRef(true);
 
   useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+
     fetchPasswordsWithQuery(query);
   }, [fetchPasswordsWithQuery, query]);
 
@@ -44,21 +49,11 @@ const SearchVault = ({ onPasswordCreateRequest, noButtons }: Props) => {
         type="search"
         placeholder={`Search Vault (${totalCount})`}
       >
-        <CSSTransition
-          in={!!query}
-          timeout={200}
-          classNames={{
-            enter: styles['clear-button_enter'],
-            enterActive: styles['clear-button_enter-active'],
-            exit: styles['clear-button_exit'],
-            exitActive: styles['clear-button_exit-active'],
-          }}
-          unmountOnExit
-        >
-          <Button onClick={handleClear} className={styles['clear-button']}>
+        {!!query && (
+          <Button onClick={handleClear} className={styles.clearButton}>
             <HiMiniXMark />
           </Button>
-        </CSSTransition>
+        )}
       </TextInput>
 
       {!noButtons && (

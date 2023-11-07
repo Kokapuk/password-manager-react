@@ -1,6 +1,6 @@
+import cn from 'classnames';
 import { ReactNode } from 'react';
 import styles from './Button.module.scss';
-import classNames from 'classnames';
 
 export interface ButtonProps {
   loading?: boolean;
@@ -11,10 +11,11 @@ const Button = ({ loading, children, ...props }: React.ButtonHTMLAttributes<HTML
   return (
     <button
       {...props}
-      className={classNames(styles.button, loading && styles.button_loading, props.className)}
-      disabled={loading || props.disabled}>
+      className={cn(styles.button, loading && styles.loading, props.className)}
+      disabled={loading || props.disabled}
+    >
       {children}
-      <div className={classNames(styles.button__spinner, loading && styles.button__spinner_show)} />
+      <div className={cn(styles.spinner, loading && styles.visible)} />
     </button>
   );
 };

@@ -5,8 +5,12 @@ export interface AuthState {
   setToken(token: string | null): void;
 }
 
-const useAuthStore = create<AuthState>((set) => ({
+export const getDefaultAuthState = (): Omit<AuthState, 'setToken'> => ({
   token: null,
+});
+
+const useAuthStore = create<AuthState>((set) => ({
+  ...getDefaultAuthState(),
   setToken(token) {
     set({ token });
   },

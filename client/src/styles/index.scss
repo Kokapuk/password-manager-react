@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import './vars';
+@import './mixins/screen.scss';
 
 * {
   padding: 0;
@@ -23,15 +24,11 @@ body,
 #root {
   background-color: $bg-dark;
 
-  @media screen and (width >= 1024px) {
-    padding: 50px 250px;
+  @include desktop {
+    padding: 50px 150px;
   }
 
-  @media screen and (width < 1024px) {
-    padding: 25px 75px;
-  }
-
-  @media screen and (width <= 767px) {
+  @include tabletAndMobile {
     padding: 25px;
   }
 }

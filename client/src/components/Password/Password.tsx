@@ -1,4 +1,5 @@
-import classNames from 'classnames';
+import cn from 'classnames';
+import useEditorStore from '../../store/editor';
 import { Password as PasswordType } from '../../utils/types';
 import Favicon from '../Favicon';
 import styles from './Password.module.scss';
@@ -6,12 +7,13 @@ import styles from './Password.module.scss';
 interface Props {
   password: PasswordType;
   onClick?(): void;
-  selected?: boolean;
 }
 
-const Password = ({ password, onClick, selected }: Props) => {
+const Password = ({ password, onClick }: Props) => {
+  const selectedPassword = useEditorStore((state) => state.selectedPassword);
+
   return (
-    <button onClick={onClick} className={classNames(styles.button, selected && styles.button_selected)}>
+    <button onClick={onClick} className={cn(styles.button, selectedPassword?._id === password._id && styles.selected)}>
       <Favicon website={password.website} />
       <div className={styles.details}>
         <h2>{password.name}</h2>

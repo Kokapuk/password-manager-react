@@ -1,35 +1,44 @@
 @import 'src/styles/vars';
+@import 'src/styles/mixins/screen';
 
 .container {
   display: flex;
   height: 100%;
-
-  &_switch-enter {
-    opacity: 0;
-    scale: 1.05;
-  }
-
-  &_switch-enter-active {
-    opacity: 1;
-    scale: 1;
-    transition: $transition;
-  }
-
-  &_switch-exit {
-    opacity: 1;
-    scale: 1;
-  }
-
-  &_switch-exit-active {
-    opacity: 0;
-    scale: 0.95;
-    transition: $transition;
-  }
+  gap: 100px;
 }
 
-.password-list {
+.passwordList {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
+
+  @include mobile {
+    &.editorOpen {
+      display: none;
+    }
+  }
+}
+
+.passwordEditorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+
+  @include mobile {
+    &.editorNotOpen {
+      display: none;
+    }
+  }
+
+  .placeholder {
+    background-color: $bg-light;
+    border-radius: 25px;
+    padding: 5px 15px;
+    font-size: 14px;
+    opacity: 0.5;
+    font-weight: 300;
+  }
 }

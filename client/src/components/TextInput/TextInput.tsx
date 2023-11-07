@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import cn from 'classnames';
 import { ReactNode, Ref, forwardRef } from 'react';
 import { IconContext } from 'react-icons';
 import styles from './TextInput.module.scss';
@@ -15,7 +15,7 @@ const TextInput = forwardRef(
     ref: Ref<HTMLInputElement>
   ) => {
     return (
-      <div className={classNames(styles.container, fullHeight && styles['container_full-height'])}>
+      <div className={cn(styles.container, fullHeight && styles['container_full-height'])}>
         {icon && <IconContext.Provider value={{ className: styles.icon }}>{icon}</IconContext.Provider>}
         <input ref={ref} {...props} className={styles.input} />
         {children}

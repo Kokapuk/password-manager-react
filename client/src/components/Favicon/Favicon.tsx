@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import cn from 'classnames';
 import { useEffect, useState } from 'react';
 import styles from './Favicon.module.scss';
 
@@ -15,10 +15,10 @@ const Favicon = ({ website }: Props) => {
   }, [website]);
 
   return (
-    <div className={classNames(styles.container, (isLoading || failedToLoad) && styles.container_loading)}>
+    <div className={cn(styles.container, (isLoading || failedToLoad) && styles.container_loading)}>
       <img
         loading="lazy"
-        className={classNames(styles.image, (isLoading || failedToLoad) && styles.image_loading)}
+        className={cn(styles.image, (isLoading || failedToLoad) && styles.image_loading)}
         onLoad={() => setLoading(false)}
         onError={() => setFailedToLoad(true)}
         src={`https://www.google.com/s2/favicons?domain=${website}&sz=128`}

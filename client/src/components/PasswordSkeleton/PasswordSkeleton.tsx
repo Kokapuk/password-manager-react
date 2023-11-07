@@ -1,13 +1,13 @@
-import classNames from 'classnames';
+import cn from 'classnames';
 import styles from './PasswordSkeleton.module.scss';
 
 const PasswordSkeleton = () => {
   return (
-    <div className={classNames(styles.bone, styles.background)}>
-      <div className={classNames(styles.bone, styles.image)}></div>
+    <div className={cn(styles.bone, styles.background)}>
+      <div className={cn(styles.bone, styles.image)}></div>
       <div className={styles.details}>
-        <div className={classNames(styles.bone, styles.details__title)}></div>
-        <div className={classNames(styles.bone, styles['details__sub-title'])}></div>
+        <div className={cn(styles.bone, styles.title)}></div>
+        <div className={cn(styles.bone, styles.subtitle)}></div>
       </div>
     </div>
   );

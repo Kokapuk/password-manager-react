@@ -39,26 +39,26 @@
     background-color: rgba(255, 255, 255, 0.2);
   }
 
-  &_loading {
+  &.loading {
     color: transparent;
   }
+}
 
-  &__spinner {
-    position: absolute;
-    top: auto;
-    left: auto;
-    height: 70%;
-    aspect-ratio: 1/1;
-    border: 3px solid white;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    opacity: 0;
-    transition: $transition;
+.spinner {
+  position: absolute;
+  top: auto;
+  left: auto;
+  height: 70%;
+  aspect-ratio: 1/1;
+  border: 3px solid white;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  opacity: 0;
+  transition: $transition;
 
-    &_show {
-      opacity: 1;
-      animation: 750ms spin linear infinite;
-    }
+  &.visible {
+    opacity: 1;
+    animation: 750ms spin linear infinite;
   }
 }
 

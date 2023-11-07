@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import cn from 'classnames';
 import { useState } from 'react';
 import { HiMiniLockClosed, HiMiniUser } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
@@ -65,11 +65,7 @@ const Auth = ({ authType }: Props) => {
         {authType}
       </Button>
       <Link to={authType === 'Sign Up' ? '/signIn' : '/signUp'}>
-        <Button
-          loading={isLoading}
-          className={classNames(styles.button, styles['button__alternate-auth'])}
-          type="button"
-        >
+        <Button loading={isLoading} className={cn(styles.button, styles.alternateAuth)} type="button">
           {authType === 'Sign Up' ? 'Sign In' : 'Sign Up'}
         </Button>
       </Link>

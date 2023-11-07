@@ -1,16 +1,16 @@
+import cn from 'classnames';
 import { useEffect, useState } from 'react';
-import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import CreatePasswordModal from '../../components/CreatePasswordModal';
 import PasswordEditor from '../../components/PasswordEditor';
 import PasswordList from '../../components/PasswordList';
 import SearchVault from '../../components/SearchVault';
 import useRedirect from '../../hooks/useRedirect';
-import { Password } from '../../utils/types';
-import styles from './Home.module.scss';
+import useEditorStore from '../../store/editor';
 import usePasswordsStore from '../../store/passwords';
+import styles from './Home.module.scss';
 
 const Home = () => {
-  const [selectedPassword, setSelectedPassword] = useState<Password | null>(null);
+  const { selectedPassword, setSelectedPassword } = useEditorStore();
   const [isCreatePasswordModalOpen, setCreatePasswordModalOpen] = useState(false);
   const fetchPasswords = usePasswordsStore((state) => state.fetch);
   useRedirect('authOnly');
@@ -21,32 +21,20 @@ const Home = () => {
 
   return (
     <>
-      <SwitchTransition>
-        <CSSTransition
-          timeout={200}
-          key={selectedPassword?._id ?? ''}
-          classNames={{
-            enter: styles['container_switch-enter'],
-            enterActive: styles['container_switch-enter-active'],
-            exit: styles['container_switch-exit'],
-            exitActive: styles['container_switch-exit-active'],
-          }}
-        >
-          <div className={styles.container}>
-            {selectedPassword ? (
-              <PasswordEditor onClose={() => setSelectedPassword(null)} password={selectedPassword} />
-            ) : (
-              <div className={styles['password-list']}>
-                <SearchVault onPasswordCreateRequest={() => setCreatePasswordModalOpen(true)} />
-                <PasswordList
-                  selectedPassword={selectedPassword}
-                  onPasswordSelect={(password) => setSelectedPassword(password)}
-                />
-              </div>
-            )}
-          </div>
-        </CSSTransition>
-      </SwitchTransition>
+      <div className={styles.container}>
+        <div className={cn(styles.passwordList, !!selectedPassword && styles.editorOpen)}>
+          <SearchVault onPasswordCreateRequest={() => setCreatePasswordModalOpen(true)} />
+          <PasswordList onPasswordSelect={(password) => setSelectedPassword(password)} />
+        </div>
+        <div className={cn(styles.passwordEditorContainer, !selectedPassword && styles.editorNotOpen)}>
+          {selectedPassword ? (
+            <PasswordEditor key={selectedPassword._id} />
+          ) : (
+            <p className={styles.placeholder}>Select a password to view and edit it</p>
+          )}
+        </div>
+      </div>
+
       <CreatePasswordModal
         isOpen={isCreatePasswordModalOpen}
         close={() => setCreatePasswordModalOpen(false)}

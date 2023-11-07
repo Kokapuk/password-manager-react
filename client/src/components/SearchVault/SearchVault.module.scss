@@ -11,35 +11,11 @@
   padding: 0 10px !important;
 }
 
-.clear-button {
+.clearButton {
   @extend .button;
   height: 100%;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
   color: rgba(255, 255, 255, 0.3);
   background-color: transparent !important;
-
-  &_enter {
-    opacity: 0;
-    scale: 0.75;
-    transition: none !important;
-  }
-
-  &_enter-active {
-    opacity: 1;
-    scale: 1;
-    transition: $transition !important;
-  }
-
-  &_exit {
-    opacity: 1;
-    scale: 1;
-    transition: none !important;
-  }
-
-  &_exit-active {
-    opacity: 0;
-    scale: 0.75;
-    transition: $transition !important;
-  }
 }
