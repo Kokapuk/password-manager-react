@@ -1,22 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { HiMiniGlobeAlt, HiMiniLockClosed } from 'react-icons/hi2';
-import usePasswordsStore from '../../store/passwords';
-import api from '../../utils/api';
-import simplifyUrl from '../../utils/simplifyUrl';
-import { Password } from '../../utils/types';
-import Modal from '../Modal';
-import TextInput from '../TextInput';
+import useEditorStore from '../../../store/editor';
+import usePasswordsStore from '../../../store/passwords';
+import api from '../../../utils/api';
+import simplifyUrl from '../../../utils/simplifyUrl';
+import Modal from '../../Modal';
+import TextInput from '../../TextInput';
 
 interface Props {
   isOpen: boolean;
-  close(): void;
-  onSelect(password: Password | null): void;
+  onCloseRequest(): void;
 }
 
-const CreatePasswordModal = ({ isOpen, close, onSelect }: Props) => {
+const CreatePasswordModal = ({ isOpen, onCloseRequest }: Props) => {
   const [newPasswordInfo, setNewPasswordInfo] = useState<{ name: string; website: string }>({ name: '', website: '' });
   const [creatingPassword, setCreatingPassword] = useState(false);
   const newPasswordInput = useRef<HTMLInputElement>(null);
+  const setSelectedPassword = useEditorStore((state) => state.setSelectedPassword);
   const fetchPasswords = usePasswordsStore((state) => state.fetch);
 
   useEffect(() => {
@@ -35,8 +35,8 @@ const CreatePasswordModal = ({ isOpen, close, onSelect }: Props) => {
     try {
       const newPassword = await api.create(newPasswordInfo.name, newPasswordInfo.website);
       fetchPasswords();
-      close();
-      onSelect(newPassword);
+      onCloseRequest();
+      setSelectedPassword(newPassword);
     } finally {
       setCreatingPassword(false);
       setNewPasswordInfo({ name: '', website: '' });
@@ -47,7 +47,7 @@ const CreatePasswordModal = ({ isOpen, close, onSelect }: Props) => {
     <Modal
       title="Create password"
       isOpen={isOpen}
-      close={close}
+      onCloseRequest={onCloseRequest}
       buttons={[{ title: 'Create', onClick: createPassword, loading: creatingPassword }]}
     >
       <TextInput

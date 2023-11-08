@@ -1,17 +1,17 @@
+import { debounce } from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { HiMiniMagnifyingGlass, HiMiniPlus, HiMiniXMark } from 'react-icons/hi2';
+import { HiMiniMagnifyingGlass, HiMiniXMark } from 'react-icons/hi2';
 import usePasswordsStore from '../../store/passwords';
-import debounce from '../../utils/debounce';
 import Button from '../Button';
 import TextInput from '../TextInput';
+import Buttons from './Buttons';
 import styles from './SearchVault.module.scss';
 
 interface Props {
-  onPasswordCreateRequest?(): void;
   noButtons?: boolean;
 }
 
-const SearchVault = ({ onPasswordCreateRequest, noButtons }: Props) => {
+const SearchVault = ({ noButtons }: Props) => {
   const [query, setQuery] = useState('');
   const { fetch: fetchPasswords, totalCount } = usePasswordsStore();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,18 +56,7 @@ const SearchVault = ({ onPasswordCreateRequest, noButtons }: Props) => {
         )}
       </TextInput>
 
-      {!noButtons && (
-        <>
-          <Button onClick={onPasswordCreateRequest} className={styles.button}>
-            <HiMiniPlus />
-          </Button>
-          {/* <Link style={{ display: 'flex', flexShrink: 0, flexGrow: 0 }} to='/settings'>
-            <Button className={styles.button}>
-              <HiMiniCog8Tooth />
-            </Button>
-          </Link> */}
-        </>
-      )}
+      {!noButtons && <Buttons />}
     </div>
   );
 };

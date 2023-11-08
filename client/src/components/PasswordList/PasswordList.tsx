@@ -32,7 +32,7 @@ const PasswordList = ({ onPasswordSelect, filter }: Props) => {
 
   return (
     <div ref={list} onScroll={handleScroll} className={styles.list}>
-      {filteredPasswords.map((password) => (
+      {!fetching && filteredPasswords.map((password) => (
         <Password
           onClick={onPasswordSelect && (() => onPasswordSelect(password))}
           key={password._id}

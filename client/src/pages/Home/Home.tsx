@@ -1,6 +1,5 @@
 import cn from 'classnames';
-import { useEffect, useState } from 'react';
-import CreatePasswordModal from '../../components/CreatePasswordModal';
+import { useEffect } from 'react';
 import PasswordEditor from '../../components/PasswordEditor';
 import PasswordList from '../../components/PasswordList';
 import SearchVault from '../../components/SearchVault';
@@ -11,20 +10,20 @@ import styles from './Home.module.scss';
 
 const Home = () => {
   const { selectedPassword, setSelectedPassword } = useEditorStore();
-  const [isCreatePasswordModalOpen, setCreatePasswordModalOpen] = useState(false);
   const fetchPasswords = usePasswordsStore((state) => state.fetch);
   useRedirect('authOnly');
 
   useEffect(() => {
     fetchPasswords(undefined, undefined, true);
-  }, [fetchPasswords]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
       <div className={styles.container}>
         <div className={cn(styles.passwordList, !!selectedPassword && styles.editorOpen)}>
-          <SearchVault onPasswordCreateRequest={() => setCreatePasswordModalOpen(true)} />
-          <PasswordList onPasswordSelect={(password) => setSelectedPassword(password)} />
+          <SearchVault />
+          <PasswordList onPasswordSelect={setSelectedPassword} />
         </div>
         <div className={cn(styles.passwordEditorContainer, !selectedPassword && styles.editorNotOpen)}>
           {selectedPassword ? (
@@ -34,12 +33,6 @@ const Home = () => {
           )}
         </div>
       </div>
-
-      <CreatePasswordModal
-        isOpen={isCreatePasswordModalOpen}
-        close={() => setCreatePasswordModalOpen(false)}
-        onSelect={setSelectedPassword}
-      />
     </>
   );
 };

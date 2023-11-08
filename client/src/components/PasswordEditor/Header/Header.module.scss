@@ -1,0 +1,15 @@
+.header {
+  display: flex;
+  justify-content: end;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.button {
+  gap: 5px;
+  background-color: rgba(255, 255, 255, 0.065) !important;
+
+  .icon {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}

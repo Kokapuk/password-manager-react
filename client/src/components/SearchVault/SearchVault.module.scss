@@ -6,14 +6,10 @@
   flex: 0 0 35px;
 }
 
-.button {
+.clearButton {
+  height: 100%;
   font-size: 20px !important;
   padding: 0 10px !important;
-}
-
-.clearButton {
-  @extend .button;
-  height: 100%;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
   color: rgba(255, 255, 255, 0.3);

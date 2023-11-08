@@ -9,12 +9,12 @@ interface Props {
   isOpen: boolean;
   title: string;
   children: ReactNode;
-  close?(): void;
+  onCloseRequest?(): void;
   buttons?: ({ title: string; secondary?: boolean } & ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>)[];
   fullHeight?: boolean;
 }
 
-const Modal = ({ isOpen: show, title, children, close: onCloseRequest, buttons, fullHeight }: Props) => {
+const Modal = ({ isOpen: show, title, children, onCloseRequest, buttons, fullHeight }: Props) => {
   return createPortal(
     <div className={cn(styles.background, !show && styles.hidden)}>
       <div className={cn(styles.container, !show && styles.hidden, fullHeight && styles.fullHeight)}>

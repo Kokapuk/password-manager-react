@@ -8,7 +8,7 @@
   flex-grow: 0;
   overflow: hidden;
 
-  &_loading {
+  &.loading {
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.2);
     animation: blink 1.5s infinite;
@@ -21,7 +21,7 @@
   border-radius: $border-radius;
   transition: $transition;
 
-  &_loading {
+  &.loading {
     opacity: 0;
     pointer-events: none;
   }
