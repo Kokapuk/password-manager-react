@@ -7,9 +7,10 @@
   appearance: none;
   border-radius: 15px;
   cursor: pointer;
-  transition: $transition;
   position: relative;
 
+  @include transition(background-color);
+  
   &:checked {
     background-color: $accent;
   }
@@ -23,8 +24,9 @@
     aspect-ratio: 1/1;
     border-radius: 15px;
     background-color: white;
-    transition: $transition;
     scale: 0.7;
+
+    @include transition(left scale)
   }
 
   &:checked::before {

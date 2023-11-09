@@ -1,4 +1,4 @@
-import { body, oneOf, validationResult } from 'express-validator';
+import { body, validationResult } from 'express-validator';
 
 export const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
@@ -30,12 +30,5 @@ export const signUpValidation = [...signInValidation];
 
 export const passwordValidation = [
   body('name', 'Invalid name').isLength({ min: 1, max: 64 }),
-  // body('credentials', 'Invalid credentials').isObject(),
-  // oneOf([body('credentials.fields').isArray(), body('credentials.integration').isString()], {
-  //   message: 'Only one of these must be passed: fields, integration',
-  // }),
-  // oneOf([body('credentials.fields').isEmpty(), body('credentials.integration').isEmpty()], {
-  //   message: 'Only one of these must be passed: fields, integration',
-  // }),
   body('website', 'Invalid website').isURL(),
 ];

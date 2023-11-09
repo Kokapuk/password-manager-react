@@ -1,7 +1,7 @@
 import useEditorStore from '../../store/editor';
 import CreateFieldModal from './CreateFieldModal';
+import Credentials from './Credentials';
 import DeleteModal from './DeleteModal';
-import FieldList from './FieldList';
 import Header from './Header';
 import IntegrationModal from './IntegrationModal';
 import styles from './PasswordEditor.module.scss';
@@ -18,7 +18,7 @@ const PasswordEditor = () => {
     <div className={styles.container}>
       <Header />
       <Title />
-      <FieldList />
+      <Credentials />
       <CreateFieldModal />
       <IntegrationModal />
       <DeleteModal />

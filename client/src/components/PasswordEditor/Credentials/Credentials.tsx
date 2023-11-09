@@ -2,11 +2,11 @@ import useEditorStore from '../../../store/editor';
 import simplifyUrl from '../../../utils/simplifyUrl';
 import { Password as PasswordType } from '../../../utils/types';
 import Field from '../../Field';
-import Password from '../../Password';
-import styles from './FieldList.module.scss';
+import Integration from '../Integration';
+import styles from './Credentials.module.scss';
 
-const FieldList = () => {
-  const { isEditing, draftPassword, setSelectedPassword, setDraftPassword, setIntegrationModalOpen } = useEditorStore();
+const Credentials = () => {
+  const { isEditing, draftPassword, setDraftPassword } = useEditorStore();
 
   if (!draftPassword) {
     return null;
@@ -61,7 +61,7 @@ const FieldList = () => {
   };
 
   return (
-    <div className={styles.fieldList}>
+    <div className={styles.container}>
       {draftPassword.credentials.fields?.map((field) => (
         <Field
           key={field._id}
@@ -76,15 +76,7 @@ const FieldList = () => {
         {draftPassword.credentials.integration && (
           <>
             <h4>Integration</h4>
-            <Password
-              key={draftPassword.credentials.integration._id}
-              onClick={() =>
-                isEditing
-                  ? setIntegrationModalOpen(true)
-                  : setSelectedPassword(draftPassword.credentials.integration as PasswordType)
-              }
-              password={draftPassword.credentials.integration as PasswordType}
-            />
+            <Integration />
           </>
         )}
       </>
@@ -106,4 +98,4 @@ const FieldList = () => {
   );
 };
 
-export default FieldList;
+export default Credentials;

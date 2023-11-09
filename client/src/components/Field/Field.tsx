@@ -37,27 +37,27 @@ const Field = ({ field, readOnly, onInput, onToggleShow, onDelete, onBlur, websi
       <div className={styles.buttons}>
         {!website && !readOnly && (
           <>
-            <Button onClick={onDelete} className={styles.buttons__button}>
+            <Button onClick={onDelete} className={styles.button}>
               <HiMiniTrash />
             </Button>
-            <Button onClick={() => onInput(generatePassword())} className={styles.buttons__button}>
+            <Button onClick={() => onInput(generatePassword())} className={styles.button}>
               <HiMiniArrowPath />
             </Button>
           </>
         )}
         {!website && (
-          <Button onClick={onToggleShow} className={styles.buttons__button}>
+          <Button onClick={onToggleShow} className={styles.button}>
             {field.isPassword ? <HiMiniEye /> : <HiMiniEyeSlash />}
           </Button>
         )}
         {website && (
           <a href={`https://${field.value}`} target="_blank">
-            <Button className={styles.buttons__button}>
+            <Button className={styles.button}>
               <HiMiniArrowTopRightOnSquare />
             </Button>
           </a>
         )}
-        <Button onClick={() => navigator.clipboard.writeText(field.value)} className={styles.buttons__button}>
+        <Button onClick={() => navigator.clipboard.writeText(field.value)} className={styles.button}>
           <HiMiniSquare2Stack />
         </Button>
       </div>

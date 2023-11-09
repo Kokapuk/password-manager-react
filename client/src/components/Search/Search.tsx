@@ -5,18 +5,18 @@ import usePasswordsStore from '../../store/passwords';
 import Button from '../Button';
 import TextInput from '../TextInput';
 import Buttons from './Buttons';
-import styles from './SearchVault.module.scss';
+import styles from './Search.module.scss';
 
 interface Props {
   noButtons?: boolean;
 }
 
-const SearchVault = ({ noButtons }: Props) => {
+const Search = ({ noButtons }: Props) => {
   const [query, setQuery] = useState('');
   const { fetch: fetchPasswords, totalCount } = usePasswordsStore();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchPasswordsWithQuery = useCallback(
-    debounce((query: string) => fetchPasswords(query), 250),
+    debounce((query: string) => fetchPasswords(query), 500),
     []
   );
   const firstRender = useRef(true);
@@ -61,4 +61,4 @@ const SearchVault = ({ noButtons }: Props) => {
   );
 };
 
-export default SearchVault;
+export default Search;

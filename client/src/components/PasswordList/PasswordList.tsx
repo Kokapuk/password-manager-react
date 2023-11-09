@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import usePasswordsStore from '../../store/passwords';
+import usePasswordsStore, { limitPerPage } from '../../store/passwords';
 import { Password as PasswordType } from '../../utils/types';
 import Password from '../Password';
 import PasswordSkeleton from '../PasswordSkeleton';
@@ -32,14 +32,14 @@ const PasswordList = ({ onPasswordSelect, filter }: Props) => {
 
   return (
     <div ref={list} onScroll={handleScroll} className={styles.list}>
-      {!fetching && filteredPasswords.map((password) => (
+      {filteredPasswords.map((password) => (
         <Password
           onClick={onPasswordSelect && (() => onPasswordSelect(password))}
           key={password._id}
           password={password}
         />
       ))}
-      {fetching && new Array(20).fill(0).map((_item, index) => <PasswordSkeleton key={index} />)}
+      {fetching && new Array(limitPerPage).fill(0).map((_item, index) => <PasswordSkeleton key={index} />)}
       {!fetching && filteredPasswords.length === 0 && (
         <p className={styles.emptyPlaceholder}>{query ? 'Nothing found' : 'Nothing yet'}</p>
       )}

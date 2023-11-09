@@ -1,0 +1,37 @@
+@import 'src/styles/vars';
+
+.removeButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  translate: 50% -50%;
+  height: 25px;
+  width: 25px;
+  padding: 2px;
+  border-radius: 50%;
+  background-color: $bg;
+  border: 1px solid $bg-light;
+  color: white;
+  cursor: pointer;
+  opacity: 0;
+
+  @include transition(opacity background-color border-color color);
+
+  .container:hover & {
+    opacity: 1;
+  }
+
+  &:hover {
+    background-color: $danger;
+    border-color: $danger;
+    color: white;
+  }
+
+  .icon {
+    height: 100%;
+    width: 100%;
+  }
+}

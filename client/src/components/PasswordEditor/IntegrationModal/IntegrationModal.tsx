@@ -3,7 +3,7 @@ import { Password } from '../../../utils/types';
 import Modal from '../../Modal';
 import PasswordList from '../../PasswordList';
 import PasswordSkeleton from '../../PasswordSkeleton';
-import SearchVault from '../../SearchVault';
+import Search from '../../Search';
 
 const IntegrationModal = () => {
   const { selectedPassword, isIntegrationModalOpen, setDraftPassword, setIntegrationModalOpen } = useEditorStore();
@@ -30,7 +30,7 @@ const IntegrationModal = () => {
       title="Select integration"
       fullHeight
     >
-      <SearchVault noButtons />
+      <Search noButtons />
       {isIntegrationModalOpen ? (
         <PasswordList onPasswordSelect={handleIntegrationSelect} filter={(item) => item._id !== selectedPassword._id} />
       ) : (

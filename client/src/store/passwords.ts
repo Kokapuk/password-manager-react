@@ -19,18 +19,26 @@ export const getDefaultPasswordsState = (): Omit<PasswordsState, 'fetch'> => ({
   query: '',
 });
 
+export const limitPerPage = 30;
+
 const usePasswordsStore = create<PasswordsState>((set, get) => ({
   ...getDefaultPasswordsState(),
   async fetch(query = '', page = 1, initialFetch = false) {
-    if (!initialFetch && get().fetching || (get().totalCount && query === get().query && get().passwords.length >= get().totalCount)) {
+    if (
+      (!initialFetch && get().fetching) ||
+      (get().totalCount && query === get().query && get().passwords.length >= get().totalCount)
+    ) {
       return;
     }
 
+    if (query !== get().query) {
+      set({ passwords: [] });
+    }
 
     set({ fetching: true });
 
     try {
-      const [totalCount, newPasswords] = await api.findAll(query, 20, page);
+      const [totalCount, newPasswords] = await api.findAll(query, limitPerPage, page);
       set((state) => ({
         ...state,
         passwords: page === 1 ? newPasswords : [...state.passwords, ...newPasswords],

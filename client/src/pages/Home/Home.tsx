@@ -2,7 +2,7 @@ import cn from 'classnames';
 import { useEffect } from 'react';
 import PasswordEditor from '../../components/PasswordEditor';
 import PasswordList from '../../components/PasswordList';
-import SearchVault from '../../components/SearchVault';
+import Search from '../../components/Search';
 import useRedirect from '../../hooks/useRedirect';
 import useEditorStore from '../../store/editor';
 import usePasswordsStore from '../../store/passwords';
@@ -22,7 +22,7 @@ const Home = () => {
     <>
       <div className={styles.container}>
         <div className={cn(styles.passwordList, !!selectedPassword && styles.editorOpen)}>
-          <SearchVault />
+          <Search />
           <PasswordList onPasswordSelect={setSelectedPassword} />
         </div>
         <div className={cn(styles.passwordEditorContainer, !selectedPassword && styles.editorNotOpen)}>

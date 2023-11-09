@@ -1,5 +1,5 @@
 @import 'src/styles/vars';
-@import 'src/styles/mixins/screen';
+@import 'src/styles/screen';
 
 .background {
   position: absolute;
@@ -12,8 +12,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: $transition;
   overflow: hidden;
+
+  @include transition(opacity);
 
   @include desktopAndTablet {
     padding: 0 25px;
@@ -34,8 +35,9 @@
   flex-direction: column;
   background-color: $bg;
   padding: 25px;
-  transition: $transition;
   $max-height: 0;
+
+  @include transition(scale translate);
 
   @include desktopAndTablet {
     min-width: 500px;

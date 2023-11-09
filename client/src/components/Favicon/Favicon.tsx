@@ -22,12 +22,20 @@ const Favicon = ({ website }: Props) => {
   );
 
   useEffect(() => {
+    if (website === memoizedWebsite) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+
     updateMemoizedWebsite(website);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateMemoizedWebsite, website]);
 
   return (
     <div className={cn(styles.container, (isLoading || failedToLoad) && styles.loading)}>
       <img
+        key={memoizedWebsite}
         loading="lazy"
         className={cn(styles.image, (isLoading || failedToLoad) && styles.loading)}
         onLoad={() => setLoading(false)}

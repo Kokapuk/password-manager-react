@@ -4,11 +4,12 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  transition: $transition;
   padding: 15px 10px;
   border-radius: $border-radius;
   position: relative;
 
+  @include transition(background-color);
+  
   &:hover {
     background-color: rgba(255, 255, 255, 0.06);
   }
@@ -25,11 +26,6 @@
   background-color: transparent;
 }
 
-.container:hover .buttons {
-  opacity: 1;
-  transition: $transition;
-}
-
 .buttons {
   position: absolute;
   height: 100%;
@@ -40,7 +36,13 @@
   gap: 5px;
   opacity: 0;
 
-  &__button {
+  @include transition(opacity);
+
+  .container:hover & {
+    opacity: 1;
+  }
+
+  .button {
     font-size: 17px !important;
     color: rgba(255, 255, 255, 0.5);
     background-color: transparent !important;
