@@ -10,6 +10,7 @@ import {
 import generatePassword from '../../utils/generatePassword';
 import { FieldDTO } from '../../utils/types';
 import Button from '../Button';
+import Tooltip from '../Tooltip';
 import styles from './Field.module.scss';
 
 interface Props {
@@ -37,29 +38,39 @@ const Field = ({ field, readOnly, onInput, onToggleShow, onDelete, onBlur, websi
       <div className={styles.buttons}>
         {!website && !readOnly && (
           <>
-            <Button onClick={onDelete} className={styles.button}>
-              <HiMiniTrash />
-            </Button>
-            <Button onClick={() => onInput(generatePassword())} className={styles.button}>
-              <HiMiniArrowPath />
-            </Button>
+            <Tooltip content="Delete field">
+              <Button onClick={onDelete} className={styles.button}>
+                <HiMiniTrash />
+              </Button>
+            </Tooltip>
+            <Tooltip content="Generate random string">
+              <Button onClick={() => onInput(generatePassword())} className={styles.button}>
+                <HiMiniArrowPath />
+              </Button>
+            </Tooltip>
           </>
         )}
         {!website && (
-          <Button onClick={onToggleShow} className={styles.button}>
-            {field.isPassword ? <HiMiniEye /> : <HiMiniEyeSlash />}
-          </Button>
+          <Tooltip content={field.isPassword ? 'Show' : 'Hide'}>
+            <Button onClick={onToggleShow} className={styles.button}>
+              {field.isPassword ? <HiMiniEye /> : <HiMiniEyeSlash />}
+            </Button>
+          </Tooltip>
         )}
         {website && (
-          <a href={`https://${field.value}`} target="_blank">
-            <Button className={styles.button}>
-              <HiMiniArrowTopRightOnSquare />
-            </Button>
-          </a>
+          <Tooltip content="Visit website">
+            <a href={`https://${field.value}`} target="_blank">
+              <Button className={styles.button}>
+                <HiMiniArrowTopRightOnSquare />
+              </Button>
+            </a>
+          </Tooltip>
         )}
-        <Button onClick={() => navigator.clipboard.writeText(field.value)} className={styles.button}>
-          <HiMiniSquare2Stack />
-        </Button>
+        <Tooltip content="Copy">
+          <Button onClick={() => navigator.clipboard.writeText(field.value)} className={styles.button}>
+            <HiMiniSquare2Stack />
+          </Button>
+        </Tooltip>
       </div>
     </div>
   );

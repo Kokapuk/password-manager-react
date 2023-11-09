@@ -1,0 +1,48 @@
+@import 'src/styles/vars';
+
+.container {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  top: calc(-100% - 11px);
+  left: 50%;
+  translate: -50% 0;
+  background-color: $bg-light;
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: $border-radius;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  scale: 0.9;
+  pointer-events: none;
+
+  @include transition(opacity scale);
+
+  .container:hover & {
+    opacity: 1;
+    scale: 1;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    translate: -50% 50%;
+    width: 9px;
+    height: 9px;
+    rotate: 45deg;
+    background-color: $bg-light;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left-color: transparent;
+    border-top-color: transparent;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    white-space: nowrap;
+  }
+}
