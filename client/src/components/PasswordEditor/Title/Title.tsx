@@ -25,12 +25,12 @@ const Title = () => {
       />
       {isEditing && (
         <div className={styles.buttons}>
-          <Tooltip content="Select integration" position="bottom">
+          <Tooltip content="Select integration" placement="bottom">
             <Button onClick={() => setIntegrationModalOpen(true)} className={styles.button}>
               <HiMiniLink />
             </Button>
           </Tooltip>
-          <Tooltip content="Add field" position="bottom">
+          <Tooltip content="Add field" placement="bottom">
             <Button onClick={() => setCreateFieldModalOpen(true)} className={styles.button}>
               <HiMiniPlus />
             </Button>

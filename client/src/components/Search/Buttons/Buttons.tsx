@@ -10,7 +10,7 @@ const Buttons = () => {
 
   return (
     <>
-      <Tooltip content='Create password' position='bottom'>
+      <Tooltip content="Create password" placement="bottom">
         <Button onClick={() => setCreatePasswordModalOpen(true)} className={styles.button}>
           <HiMiniPlus />
         </Button>

@@ -36,7 +36,7 @@ const Integration = () => {
         }
       />
       {isEditing && (
-        <Tooltip containerClass={styles.removeButtonContainer} content="Remove integration" position="left">
+        <Tooltip containerClass={styles.removeButtonContainer} content="Remove integration" placement="left">
           <button onClick={handleRemoveClick} className={styles.removeButton}>
             <IconContext.Provider value={{ className: styles.icon }}>
               <HiMiniXMark />

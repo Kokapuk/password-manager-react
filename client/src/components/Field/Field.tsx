@@ -38,12 +38,12 @@ const Field = ({ field, readOnly, onInput, onToggleShow, onDelete, onBlur, websi
       <div className={styles.buttons}>
         {!website && !readOnly && (
           <>
-            <Tooltip content="Delete field" position="top">
+            <Tooltip content="Delete field" placement="top">
               <Button onClick={onDelete} className={styles.button}>
                 <HiMiniTrash />
               </Button>
             </Tooltip>
-            <Tooltip content="Generate random string" position="top">
+            <Tooltip content="Generate random string" placement="top">
               <Button onClick={() => onInput(generatePassword())} className={styles.button}>
                 <HiMiniArrowPath />
               </Button>
@@ -51,14 +51,14 @@ const Field = ({ field, readOnly, onInput, onToggleShow, onDelete, onBlur, websi
           </>
         )}
         {!website && (
-          <Tooltip content={field.isPassword ? 'Show' : 'Hide'} position="top">
+          <Tooltip content={field.isPassword ? 'Show' : 'Hide'} placement="top">
             <Button onClick={onToggleShow} className={styles.button}>
               {field.isPassword ? <HiMiniEye /> : <HiMiniEyeSlash />}
             </Button>
           </Tooltip>
         )}
         {website && (
-          <Tooltip content="Visit website" position="top">
+          <Tooltip content="Visit website" placement="top">
             <a href={`https://${field.value}`} target="_blank">
               <Button className={styles.button}>
                 <HiMiniArrowTopRightOnSquare />
@@ -66,7 +66,7 @@ const Field = ({ field, readOnly, onInput, onToggleShow, onDelete, onBlur, websi
             </a>
           </Tooltip>
         )}
-        <Tooltip content="Copy" position="top">
+        <Tooltip content="Copy" placement="top">
           <Button onClick={() => navigator.clipboard.writeText(field.value)} className={styles.button}>
             <HiMiniSquare2Stack />
           </Button>
