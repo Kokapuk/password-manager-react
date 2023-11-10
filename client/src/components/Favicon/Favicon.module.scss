@@ -7,7 +7,7 @@
   flex-grow: 0;
   overflow: hidden;
   
-  @include transition(border-radius background-color);
+  @include transition(border-radius, background-color);
 
   &.loading {
     border-radius: 50%;

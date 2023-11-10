@@ -1,6 +1,10 @@
 @import 'src/styles/vars';
+@import 'src/styles/screen';
+
+$tooltipOffset: 9px;
 
 .container {
+  display: flex;
   position: relative;
 }
 
@@ -15,17 +19,19 @@
   opacity: 0;
   pointer-events: none;
 
-  @include transition(opacity translate);
+  @include transition(opacity, translate);
 
-  .container:hover & {
-    opacity: 1;
+  @include desktop {
+    .container:hover & {
+      opacity: 1;
+    }
   }
 
   &::before {
     content: '';
     position: absolute;
-    width: 9px;
-    height: 9px;
+    width: 7px;
+    height: 7px;
     background-color: $bg-light;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-left-color: transparent;
@@ -37,8 +43,10 @@
     left: 50%;
     translate: -50% -100%;
 
-    .container:hover & {
-      translate: -50% calc(-100% - 11px);
+    @include desktop {
+      .container:hover & {
+        translate: -50% calc(-100% - $tooltipOffset);
+      }
     }
 
     &::before {
@@ -54,8 +62,10 @@
     right: 0;
     translate: 100% -50%;
 
-    .container:hover & {
-      translate: calc(100% + 11px) -50%;
+    @include desktop {
+      .container:hover & {
+        translate: calc(100% + $tooltipOffset) -50%;
+      }
     }
 
     &::before {
@@ -71,8 +81,10 @@
     left: 50%;
     translate: -50% 100%;
 
-    .container:hover & {
-      translate: -50% calc(100% + 11px);
+    @include desktop {
+      .container:hover & {
+        translate: -50% calc(100% + $tooltipOffset);
+      }
     }
 
     &::before {
@@ -88,8 +100,10 @@
     left: 0;
     translate: -100% -50%;
 
-    .container:hover & {
-      translate: calc(-100% - 11px) -50%;
+    @include desktop {
+      .container:hover & {
+        translate: calc(-100% - $tooltipOffset) -50%;
+      }
     }
 
     &::before {

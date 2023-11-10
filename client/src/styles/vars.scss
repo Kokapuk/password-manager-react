@@ -7,7 +7,7 @@ $danger: #e84a5f;
 $border-radius: 5px;
 $border-radius-large: 10px;
 
-@mixin transition($transition-property) {
+@mixin transition($transition-properties...) {
   transition-duration: 200ms;
-  transition-property: $transition-property;
+  transition-property: $transition-properties;
 }

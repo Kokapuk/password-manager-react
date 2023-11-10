@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { HiMiniXMark } from 'react-icons/hi2';
 import Button, { ButtonProps } from '../Button';
@@ -14,15 +14,38 @@ interface Props {
   fullHeight?: boolean;
 }
 
-const Modal = ({ isOpen: show, title, children, onCloseRequest, buttons, fullHeight }: Props) => {
+const Modal = ({ isOpen, title, children, onCloseRequest, buttons, fullHeight }: Props) => {
+  useEffect(() => {
+    if (!isOpen || !onCloseRequest) {
+      return;
+    }
+
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      onCloseRequest();
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [isOpen, onCloseRequest]);
+
   return createPortal(
-    <div className={cn(styles.background, !show && styles.hidden)}>
-      <div className={cn(styles.container, !show && styles.hidden, fullHeight && styles.fullHeight)}>
+    <div className={cn(styles.background, !isOpen && styles.hidden)}>
+      <div className={cn(styles.container, !isOpen && styles.hidden, fullHeight && styles.fullHeight)}>
         <header className={styles.header}>
           <h2>{title}</h2>
-          <Button onClick={onCloseRequest} className={styles.button}>
-            <HiMiniXMark />
-          </Button>
+          {onCloseRequest && (
+            <Button onClick={onCloseRequest} className={styles.button}>
+              <HiMiniXMark />
+            </Button>
+          )}
         </header>
         <main className={styles.main}>{children}</main>
         {buttons && buttons.length && (

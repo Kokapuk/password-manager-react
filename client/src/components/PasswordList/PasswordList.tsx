@@ -1,46 +1,78 @@
-import { useEffect, useMemo, useRef } from 'react';
-import usePasswordsStore, { limitPerPage } from '../../store/passwords';
+import { useEffect, useRef } from 'react';
+import { limitPerPage } from '../../store/passwords';
 import { Password as PasswordType } from '../../utils/types';
 import Password from '../Password';
 import PasswordSkeleton from '../PasswordSkeleton';
 import styles from './PasswordList.module.scss';
 
 interface Props {
+  passwords: PasswordType[];
+  isFetching: boolean;
+  query: string;
+  selectedPasswordId?: string;
   onPasswordSelect?(password: PasswordType): void;
-  filter?(password: PasswordType): boolean;
+  onPaginationTriggerReached(): void;
 }
 
-const PasswordList = ({ onPasswordSelect, filter }: Props) => {
-  const { fetching, passwords, query, page, fetch: fetchPasswords } = usePasswordsStore();
+const PasswordList = ({
+  passwords,
+  isFetching,
+  query,
+  selectedPasswordId,
+  onPasswordSelect,
+  onPaginationTriggerReached,
+}: Props) => {
   const list = useRef<HTMLDivElement>(null);
-  const filteredPasswords = useMemo(
-    () => (filter ? passwords.filter((password) => filter(password)) : passwords),
-    [filter, passwords]
-  );
+  const paginationTrigger = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (fetching && passwords.length === 0) {
+    if (isFetching && passwords.length === 0) {
       list.current?.scrollTo({ top: 0 });
     }
-  }, [fetching, passwords.length]);
+  }, [isFetching, passwords.length]);
 
-  const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    if (event.currentTarget.scrollHeight - (event.currentTarget.scrollTop + event.currentTarget.clientHeight) < 100) {
-      fetchPasswords(query, page + 1);
+  useEffect(() => {
+    if (isFetching) {
+      return;
     }
-  };
+
+    if (!paginationTrigger.current) {
+      return;
+    }
+
+    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) {
+          return;
+        }
+
+        onPaginationTriggerReached();
+      });
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, {
+      root: paginationTrigger.current.parentElement,
+      rootMargin: '450px',
+      threshold: 0,
+    });
+    observer.observe(paginationTrigger.current);
+
+    return () => observer.disconnect();
+  }, [isFetching, onPaginationTriggerReached]);
 
   return (
-    <div ref={list} onScroll={handleScroll} className={styles.list}>
-      {filteredPasswords.map((password) => (
+    <div ref={list} className={styles.list}>
+      {passwords.map((password) => (
         <Password
-          onClick={onPasswordSelect && (() => onPasswordSelect(password))}
           key={password._id}
           password={password}
+          isSelected={selectedPasswordId === password._id}
+          onClick={onPasswordSelect && (() => onPasswordSelect(password))}
         />
       ))}
-      {fetching && new Array(limitPerPage).fill(0).map((_item, index) => <PasswordSkeleton key={index} />)}
-      {!fetching && filteredPasswords.length === 0 && (
+      {!isFetching && <div ref={paginationTrigger} data-pagination-trigger style={{ height: 1, flexShrink: 0 }} />}
+      {isFetching && new Array(limitPerPage).fill(0).map((_item, index) => <PasswordSkeleton key={index} />)}
+      {!isFetching && passwords.length === 0 && (
         <p className={styles.emptyPlaceholder}>{query ? 'Nothing found' : 'Nothing yet'}</p>
       )}
     </div>

@@ -33,7 +33,7 @@ export const findAll = async (req, res) => {
       .skip((req.query.page - 1 ?? 0) * req.query.limit ?? 20)
       .populate('credentials.integration');
 
-    res.set('x-total-count', await PasswordModel.count(query));
+    res.set('x-total-count', await PasswordModel.countDocuments(query));
     res.json(passwords);
   } catch (err) {
     console.error(err);

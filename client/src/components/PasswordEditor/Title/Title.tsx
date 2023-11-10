@@ -2,17 +2,12 @@ import { HiMiniLink, HiMiniPlus } from 'react-icons/hi2';
 import useEditorStore from '../../../store/editor';
 import Button from '../../Button';
 import Favicon from '../../Favicon';
-import styles from './Title.module.scss';
-import { useEffect } from 'react';
 import Tooltip from '../../Tooltip';
+import styles from './Title.module.scss';
 
 const Title = () => {
   const { isEditing, draftPassword, setDraftPassword, setCreateFieldModalOpen, setIntegrationModalOpen } =
     useEditorStore();
-
-  useEffect(() => {
-    console.log(draftPassword?.website);
-  }, [draftPassword?.website]);
 
   if (!draftPassword) {
     return null;

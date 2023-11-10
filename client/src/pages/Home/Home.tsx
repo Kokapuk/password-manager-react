@@ -10,7 +10,7 @@ import styles from './Home.module.scss';
 
 const Home = () => {
   const { selectedPassword, setSelectedPassword } = useEditorStore();
-  const fetchPasswords = usePasswordsStore((state) => state.fetch);
+  const { passwords, isFetching: fetching, page, totalCount, query, fetch: fetchPasswords } = usePasswordsStore();
   useRedirect('authOnly');
 
   useEffect(() => {
@@ -22,8 +22,15 @@ const Home = () => {
     <>
       <div className={styles.container}>
         <div className={cn(styles.passwordList, !!selectedPassword && styles.editorOpen)}>
-          <Search />
-          <PasswordList onPasswordSelect={setSelectedPassword} />
+          <Search totalCount={totalCount} onQueryUpdate={fetchPasswords} />
+          <PasswordList
+            passwords={passwords}
+            isFetching={fetching}
+            query={query}
+            selectedPasswordId={selectedPassword?._id}
+            onPasswordSelect={setSelectedPassword}
+            onPaginationTriggerReached={() => fetchPasswords(query, page + 1)}
+          />
         </div>
         <div className={cn(styles.passwordEditorContainer, !selectedPassword && styles.editorNotOpen)}>
           {selectedPassword ? (

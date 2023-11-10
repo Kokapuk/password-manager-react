@@ -2,6 +2,7 @@
 @import 'src/styles/screen';
 
 .background {
+  z-index: 100;
   position: absolute;
   top: 0;
   right: 0;
@@ -37,7 +38,7 @@
   padding: 25px;
   $max-height: 0;
 
-  @include transition(scale translate);
+  @include transition(scale, translate);
 
   @include desktopAndTablet {
     min-width: 500px;

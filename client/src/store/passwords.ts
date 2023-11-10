@@ -4,8 +4,8 @@ import { Password } from '../utils/types';
 
 export interface PasswordsState {
   passwords: Password[];
+  isFetching: boolean;
   page: number;
-  fetching: boolean;
   totalCount: number;
   query: string;
   fetch(query?: string, page?: number, initialFetch?: boolean): Promise<void>;
@@ -13,8 +13,8 @@ export interface PasswordsState {
 
 export const getDefaultPasswordsState = (): Omit<PasswordsState, 'fetch'> => ({
   passwords: [],
+  isFetching: true,
   page: 1,
-  fetching: true,
   totalCount: 0,
   query: '',
 });
@@ -25,7 +25,7 @@ const usePasswordsStore = create<PasswordsState>((set, get) => ({
   ...getDefaultPasswordsState(),
   async fetch(query = '', page = 1, initialFetch = false) {
     if (
-      (!initialFetch && get().fetching) ||
+      (!initialFetch && get().isFetching) ||
       (get().totalCount && query === get().query && get().passwords.length >= get().totalCount)
     ) {
       return;
@@ -35,7 +35,7 @@ const usePasswordsStore = create<PasswordsState>((set, get) => ({
       set({ passwords: [] });
     }
 
-    set({ fetching: true });
+    set({ isFetching: true });
 
     try {
       const [totalCount, newPasswords] = await api.findAll(query, limitPerPage, page);
@@ -47,7 +47,7 @@ const usePasswordsStore = create<PasswordsState>((set, get) => ({
         query,
       }));
     } finally {
-      set({ fetching: false });
+      set({ isFetching: false });
     }
   },
 }));

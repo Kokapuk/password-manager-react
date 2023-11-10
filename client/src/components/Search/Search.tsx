@@ -1,23 +1,23 @@
 import { debounce } from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HiMiniMagnifyingGlass, HiMiniXMark } from 'react-icons/hi2';
-import usePasswordsStore from '../../store/passwords';
 import Button from '../Button';
 import TextInput from '../TextInput';
 import Buttons from './Buttons';
 import styles from './Search.module.scss';
 
 interface Props {
+  totalCount: number;
   noButtons?: boolean;
+  onQueryUpdate(query: string): void;
 }
 
-const Search = ({ noButtons }: Props) => {
+const Search = ({ totalCount, noButtons, onQueryUpdate }: Props) => {
   const [query, setQuery] = useState('');
-  const { fetch: fetchPasswords, totalCount } = usePasswordsStore();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fetchPasswordsWithQuery = useCallback(
-    debounce((query: string) => fetchPasswords(query), 500),
-    []
+  const updateQuery = useCallback(
+    debounce((query: string) => onQueryUpdate(query), 500),
+    [onQueryUpdate]
   );
   const firstRender = useRef(true);
 
@@ -27,8 +27,9 @@ const Search = ({ noButtons }: Props) => {
       return;
     }
 
-    fetchPasswordsWithQuery(query);
-  }, [fetchPasswordsWithQuery, query]);
+    updateQuery(query);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.currentTarget.value);
