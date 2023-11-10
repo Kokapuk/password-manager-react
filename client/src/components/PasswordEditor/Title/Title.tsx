@@ -4,13 +4,14 @@ import Button from '../../Button';
 import Favicon from '../../Favicon';
 import styles from './Title.module.scss';
 import { useEffect } from 'react';
+import Tooltip from '../../Tooltip';
 
 const Title = () => {
   const { isEditing, draftPassword, setDraftPassword, setCreateFieldModalOpen, setIntegrationModalOpen } =
     useEditorStore();
 
   useEffect(() => {
-    console.log(draftPassword?.website)
+    console.log(draftPassword?.website);
   }, [draftPassword?.website]);
 
   if (!draftPassword) {
@@ -29,12 +30,16 @@ const Title = () => {
       />
       {isEditing && (
         <div className={styles.buttons}>
-          <Button onClick={() => setIntegrationModalOpen(true)} className={styles.button}>
-            <HiMiniLink />
-          </Button>
-          <Button onClick={() => setCreateFieldModalOpen(true)} className={styles.button}>
-            <HiMiniPlus />
-          </Button>
+          <Tooltip content="Select integration" position="bottom">
+            <Button onClick={() => setIntegrationModalOpen(true)} className={styles.button}>
+              <HiMiniLink />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Add field" position="bottom">
+            <Button onClick={() => setCreateFieldModalOpen(true)} className={styles.button}>
+              <HiMiniPlus />
+            </Button>
+          </Tooltip>
         </div>
       )}
     </div>
