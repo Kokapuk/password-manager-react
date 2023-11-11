@@ -10,7 +10,7 @@ import styles from './Home.module.scss';
 
 const Home = () => {
   const { selectedPassword, setSelectedPassword } = useEditorStore();
-  const { passwords, isFetching: fetching, page, totalCount, query, fetch: fetchPasswords } = usePasswordsStore();
+  const { passwords, isFetching, page, totalCount, query, fetch: fetchPasswords } = usePasswordsStore();
   useRedirect('authOnly');
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const Home = () => {
           <Search totalCount={totalCount} onQueryUpdate={fetchPasswords} />
           <PasswordList
             passwords={passwords}
-            isFetching={fetching}
+            isFetching={isFetching}
             query={query}
             selectedPasswordId={selectedPassword?._id}
             onPasswordSelect={setSelectedPassword}

@@ -14,6 +14,8 @@ const IntegrationModal = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [passwords, setPasswords] = useState<Password[]>([]);
   const [isFetching, setFetching] = useState(true);
+  const [isFailedToFetch, setFailedToFetch] = useState(false);
+  const [retryDelay, setRetryDelay] = useState(5000);
   const [query, setQuery] = useState('');
   const page = useRef(1);
 
@@ -37,7 +39,7 @@ const IntegrationModal = () => {
 
   const fetchPasswords = useCallback(
     async (fetchQuery = '', fetchPage = 1) => {
-      if (isFetching || (totalCount && fetchQuery === query && passwords.length >= totalCount)) {
+      if (isFetching || isFailedToFetch || (totalCount && fetchQuery === query && passwords.length >= totalCount)) {
         return;
       }
 
@@ -50,14 +52,22 @@ const IntegrationModal = () => {
       try {
         const [totalCount, newPasswords] = await api.findAll(fetchQuery, limitPerPage, fetchPage);
         setPasswords((prev) => (fetchPage === 1 ? newPasswords : [...prev, ...newPasswords]));
+        setRetryDelay(5000);
         page.current = fetchPage;
         setTotalCount(totalCount);
         setQuery(fetchQuery);
+      } catch {
+        setFailedToFetch(true);
+
+        setTimeout(() => {
+          setFailedToFetch(false);
+          setRetryDelay(prev => prev < 40000 ? prev * 2 : prev);
+        }, retryDelay);
       } finally {
         setFetching(false);
       }
     },
-    [isFetching, passwords.length, query, totalCount]
+    [isFailedToFetch, isFetching, passwords.length, query, retryDelay, totalCount]
   );
 
   if (!selectedPassword) {

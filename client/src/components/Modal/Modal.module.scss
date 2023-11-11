@@ -15,8 +15,6 @@
   align-items: center;
   overflow: hidden;
 
-  @include transition(opacity);
-
   @include desktopAndTablet {
     padding: 0 25px;
   }
@@ -25,9 +23,28 @@
     align-items: flex-end;
   }
 
-  &.hidden {
+  &.enter {
     opacity: 0;
     pointer-events: none;
+  }
+
+  &.enterActive {
+    opacity: 1;
+    pointer-events: none;
+
+    @include transition(opacity);
+  }
+
+  &.exit {
+    opacity: 1;
+    pointer-events: none;
+  }
+
+  &.exitActive {
+    opacity: 0;
+    pointer-events: none;
+
+    @include transition(opacity);
   }
 }
 
@@ -38,21 +55,33 @@
   padding: 25px;
   $max-height: 0;
 
-  @include transition(scale, translate);
-
   @include desktopAndTablet {
     min-width: 500px;
     border-radius: $border-radius-large;
     $max-height: 80vh;
+
+    @include transition(scale);
   }
 
   @include mobile {
     width: 100%;
     border-radius: $border-radius-large $border-radius-large 0 0;
     $max-height: 90vh;
+
+    @include transition(transform);
   }
 
   max-height: $max-height;
+
+  &.shown {
+    @include desktopAndTablet {
+      scale: 1;
+    }
+
+    @include mobile {
+      transform: translateY(0);
+    }
+  }
 
   &.hidden {
     @include desktopAndTablet {
@@ -60,7 +89,7 @@
     }
 
     @include mobile {
-      translate: 0 100px;
+      transform: translateY(100px);
     }
   }
 

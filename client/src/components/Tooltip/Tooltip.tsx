@@ -1,6 +1,7 @@
 import cn from 'classnames';
-import { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { CSSTransition } from 'react-transition-group';
 import styles from './Tooltip.module.scss';
 
 interface Props {
@@ -21,7 +22,7 @@ const Tooltip = ({ content, children, placement, containerClass }: Props) => {
   const container = useRef<HTMLDivElement>(null);
   const tooltip = useRef<HTMLSpanElement>(null);
   const [position, setPosition] = useState<Position>({});
-  const [visible, setVisible] = useState(false);
+  const [isVisible, setVisible] = useState(false);
 
   const updateLocation = useCallback(
     (container: HTMLDivElement) => {
@@ -62,6 +63,14 @@ const Tooltip = ({ content, children, placement, containerClass }: Props) => {
   );
 
   useEffect(() => {
+    if (!isVisible || !container.current) {
+      return;
+    }
+
+    updateLocation(container.current);
+  }, [isVisible, updateLocation, content, children]);
+
+  useEffect(() => {
     const handleScroll = () => {
       if (!container.current) {
         return;
@@ -75,27 +84,34 @@ const Tooltip = ({ content, children, placement, containerClass }: Props) => {
     return () => window.removeEventListener('scroll', handleScroll, true);
   }, [updateLocation]);
 
-  const handleMouseEnter = (event: MouseEvent<HTMLDivElement>) => {
-    updateLocation(event.currentTarget);
-    setVisible(true);
-  };
-
   return (
     <div
       ref={container}
       className={cn(styles.container, containerClass)}
-      onMouseEnter={handleMouseEnter}
+      onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
     >
       {children}
       {createPortal(
-        <span
-          ref={tooltip}
-          style={{ ...position }}
-          className={cn(styles.tooltip, styles[placement], visible && styles.visible)}
+        <CSSTransition
+          in={isVisible}
+          classNames={{
+            enter: styles.enter,
+            enterActive: styles.enterActive,
+            exit: styles.exit,
+            exitActive: styles.exitActive,
+          }}
+          timeout={200}
+          unmountOnExit
         >
-          <p className={styles.content}>{content}</p>
-        </span>,
+          <span
+            ref={tooltip}
+            style={{ ...position }}
+            className={cn(styles.tooltip, styles[placement], isVisible && styles.visible)}
+          >
+            <p className={styles.content}>{content}</p>
+          </span>
+        </CSSTransition>,
         document.querySelector('#tooltip-portal') as HTMLDivElement
       )}
     </div>

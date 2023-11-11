@@ -39,7 +39,7 @@ export const getDefaultEditorState = (): Omit<
 const useEditorStore = create<EditorState>((set) => ({
   ...getDefaultEditorState(),
   setSelectedPassword(selectedPassword) {
-    set({ selectedPassword, draftPassword: selectedPassword || undefined });
+    set({ selectedPassword, isEditing: false, draftPassword: selectedPassword || undefined });
   },
   setEditing(isEditing) {
     set({ isEditing });

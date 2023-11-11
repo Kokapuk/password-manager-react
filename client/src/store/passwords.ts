@@ -5,6 +5,8 @@ import { Password } from '../utils/types';
 export interface PasswordsState {
   passwords: Password[];
   isFetching: boolean;
+  isFailedToFetch: boolean;
+  retryDelay: number;
   page: number;
   totalCount: number;
   query: string;
@@ -14,6 +16,8 @@ export interface PasswordsState {
 export const getDefaultPasswordsState = (): Omit<PasswordsState, 'fetch'> => ({
   passwords: [],
   isFetching: true,
+  isFailedToFetch: false,
+  retryDelay: 5000,
   page: 1,
   totalCount: 0,
   query: '',
@@ -26,6 +30,7 @@ const usePasswordsStore = create<PasswordsState>((set, get) => ({
   async fetch(query = '', page = 1, initialFetch = false) {
     if (
       (!initialFetch && get().isFetching) ||
+      get().isFailedToFetch ||
       (get().totalCount && query === get().query && get().passwords.length >= get().totalCount)
     ) {
       return;
@@ -42,10 +47,20 @@ const usePasswordsStore = create<PasswordsState>((set, get) => ({
       set((state) => ({
         ...state,
         passwords: page === 1 ? newPasswords : [...state.passwords, ...newPasswords],
+        retryDelay: 5000,
         page,
         totalCount,
         query,
       }));
+    } catch {
+      set({ isFailedToFetch: true });
+
+      setTimeout(() => {
+        set({
+          isFailedToFetch: false,
+          retryDelay: get().retryDelay < 40000 ? get().retryDelay * 2 : get().retryDelay,
+        });
+      }, get().retryDelay);
     } finally {
       set({ isFetching: false });
     }
