@@ -7,7 +7,7 @@ import Buttons from './Buttons';
 import styles from './Search.module.scss';
 
 interface Props {
-  totalCount: number;
+  totalCount?: number;
   noButtons?: boolean;
   onQueryUpdate(query: string): void;
 }
@@ -28,7 +28,7 @@ const Search = ({ totalCount, noButtons, onQueryUpdate }: Props) => {
     }
 
     updateQuery(query);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +48,7 @@ const Search = ({ totalCount, noButtons, onQueryUpdate }: Props) => {
         value={query}
         onChange={handleInputChange}
         type="search"
-        placeholder={`Search Vault (${totalCount})`}
+        placeholder={totalCount ? `Search Vault (${totalCount})` : 'Search Vault'}
       >
         {!!query && (
           <Button onClick={handleClear} className={styles.clearButton}>

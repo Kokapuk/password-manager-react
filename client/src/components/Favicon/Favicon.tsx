@@ -1,6 +1,6 @@
 import cn from 'classnames';
 import { debounce } from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './Favicon.module.scss';
 
 interface Props {
@@ -11,6 +11,7 @@ const Favicon = ({ website }: Props) => {
   const [isLoading, setLoading] = useState(true);
   const [failedToLoad, setFailedToLoad] = useState(false);
   const [memoizedWebsite, setMemoizedWebsite] = useState(website);
+  const isInitialRender = useRef(true);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateMemoizedWebsite = useCallback(
@@ -22,6 +23,11 @@ const Favicon = ({ website }: Props) => {
   );
 
   useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return;
+    }
+
     if (website === memoizedWebsite) {
       setLoading(false);
     } else {

@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useEditorStore from '../../../store/editor';
+import { limitPerPage } from '../../../store/passwords';
+import api from '../../../utils/api';
 import { Password } from '../../../utils/types';
 import Modal from '../../Modal';
 import PasswordList from '../../PasswordList';
 import PasswordSkeleton from '../../PasswordSkeleton';
 import Search from '../../Search';
-import api from '../../../utils/api';
-import { limitPerPage } from '../../../store/passwords';
 
 const IntegrationModal = () => {
   const { selectedPassword, draftPassword, isIntegrationModalOpen, setDraftPassword, setIntegrationModalOpen } =
     useEditorStore();
-  const [totalCount, setTotalCount] = useState(0);
+  const [totalCount, setTotalCount] = useState<number | undefined>(undefined);
   const [passwords, setPasswords] = useState<Password[]>([]);
   const [isFetching, setFetching] = useState(true);
   const [isFailedToFetch, setFailedToFetch] = useState(false);
@@ -39,7 +39,11 @@ const IntegrationModal = () => {
 
   const fetchPasswords = useCallback(
     async (fetchQuery = '', fetchPage = 1) => {
-      if (isFetching || isFailedToFetch || (totalCount && fetchQuery === query && passwords.length >= totalCount)) {
+      if (
+        isFetching ||
+        isFailedToFetch ||
+        (totalCount !== undefined && fetchQuery === query && passwords.length >= totalCount)
+      ) {
         return;
       }
 
@@ -61,7 +65,7 @@ const IntegrationModal = () => {
 
         setTimeout(() => {
           setFailedToFetch(false);
-          setRetryDelay(prev => prev < 40000 ? prev * 2 : prev);
+          setRetryDelay((prev) => (prev < 40000 ? prev * 2 : prev));
         }, retryDelay);
       } finally {
         setFetching(false);
@@ -97,7 +101,7 @@ const IntegrationModal = () => {
       fullHeight
     >
       {isIntegrationModalOpen && (
-        <Search totalCount={totalCount > 0 ? totalCount - 1 : totalCount} noButtons onQueryUpdate={fetchPasswords} />
+        <Search totalCount={totalCount ? totalCount - 1 : totalCount} noButtons onQueryUpdate={fetchPasswords} />
       )}
       {isIntegrationModalOpen ? (
         <PasswordList

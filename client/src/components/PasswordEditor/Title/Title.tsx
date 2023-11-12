@@ -1,13 +1,10 @@
-import { HiMiniLink, HiMiniPlus } from 'react-icons/hi2';
 import useEditorStore from '../../../store/editor';
-import Button from '../../Button';
 import Favicon from '../../Favicon';
-import Tooltip from '../../Tooltip';
+import Buttons from './Buttons';
 import styles from './Title.module.scss';
 
 const Title = () => {
-  const { isEditing, draftPassword, setDraftPassword, setCreateFieldModalOpen, setIntegrationModalOpen } =
-    useEditorStore();
+  const { isEditing, draftPassword, setDraftPassword } = useEditorStore();
 
   if (!draftPassword) {
     return null;
@@ -23,20 +20,7 @@ const Title = () => {
         className={styles.input}
         readOnly={!isEditing}
       />
-      {isEditing && (
-        <div className={styles.buttons}>
-          <Tooltip content="Select integration" placement="bottom">
-            <Button onClick={() => setIntegrationModalOpen(true)} className={styles.button}>
-              <HiMiniLink />
-            </Button>
-          </Tooltip>
-          <Tooltip content="Add field" placement="bottom">
-            <Button onClick={() => setCreateFieldModalOpen(true)} className={styles.button}>
-              <HiMiniPlus />
-            </Button>
-          </Tooltip>
-        </div>
-      )}
+      <Buttons />
     </div>
   );
 };

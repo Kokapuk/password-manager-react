@@ -1,4 +1,5 @@
 @import 'src/styles/vars';
+@import 'src/styles/screen';
 
 .container {
   display: flex;
@@ -9,8 +10,9 @@
   position: relative;
 
   @include transition(background-color);
-  
-  &:hover {
+
+  &:hover,
+  &:focus-within {
     background-color: rgba(255, 255, 255, 0.06);
   }
 }
@@ -38,8 +40,14 @@
 
   @include transition(opacity);
 
-  .container:hover & {
+  @include tabletAndMobile {
+    pointer-events: none;
+  }
+
+  .container:hover &,
+  .container:focus-within & {
     opacity: 1;
+    pointer-events: visible;
   }
 
   .button {

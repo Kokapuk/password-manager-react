@@ -14,8 +14,10 @@
   width: 100%;
 
   @include mobile {
-    &.editorOpen {
-      display: none;
+    display: none;
+
+    &.active {
+      display: flex;
     }
   }
 }
@@ -28,8 +30,10 @@
   height: 100%;
 
   @include mobile {
-    &.editorNotOpen {
-      display: none;
+    display: none;
+
+    &.active {
+      display: flex;
     }
   }
 

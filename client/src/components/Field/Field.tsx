@@ -1,4 +1,3 @@
-import cn from 'classnames';
 import {
   HiMiniArrowPath,
   HiMiniArrowTopRightOnSquare,
@@ -16,16 +15,16 @@ import styles from './Field.module.scss';
 interface Props {
   field: FieldDTO;
   readOnly: boolean;
+  website?: boolean;
   onInput(value: string): void;
   onToggleShow?(): void;
   onDelete?(): void;
   onBlur?(): void;
-  website?: boolean;
 }
 
-const Field = ({ field, readOnly, onInput, onToggleShow, onDelete, onBlur, website }: Props) => {
+const Field = ({ field, readOnly, website, onInput, onToggleShow, onDelete, onBlur }: Props) => {
   return (
-    <div className={cn(styles.container)}>
+    <div className={styles.container}>
       <p className={styles.title}>{field.title}</p>
       <input
         onBlur={onBlur}

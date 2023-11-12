@@ -8,7 +8,7 @@ export interface PasswordsState {
   isFailedToFetch: boolean;
   retryDelay: number;
   page: number;
-  totalCount: number;
+  totalCount?: number;
   query: string;
   fetch(query?: string, page?: number, initialFetch?: boolean): Promise<void>;
 }
@@ -19,7 +19,7 @@ export const getDefaultPasswordsState = (): Omit<PasswordsState, 'fetch'> => ({
   isFailedToFetch: false,
   retryDelay: 5000,
   page: 1,
-  totalCount: 0,
+  totalCount: undefined,
   query: '',
 });
 
@@ -31,7 +31,9 @@ const usePasswordsStore = create<PasswordsState>((set, get) => ({
     if (
       (!initialFetch && get().isFetching) ||
       get().isFailedToFetch ||
-      (get().totalCount && query === get().query && get().passwords.length >= get().totalCount)
+      (get().totalCount !== undefined &&
+        query === get().query &&
+        get().passwords.length >= (get().totalCount as number))
     ) {
       return;
     }

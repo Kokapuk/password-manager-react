@@ -21,7 +21,7 @@ const Home = () => {
   return (
     <>
       <div className={styles.container}>
-        <div className={cn(styles.passwordList, !!selectedPassword && styles.editorOpen)}>
+        <div className={cn(styles.passwordList, !selectedPassword && styles.active)}>
           <Search totalCount={totalCount} onQueryUpdate={fetchPasswords} />
           <PasswordList
             passwords={passwords}
@@ -32,7 +32,7 @@ const Home = () => {
             onPaginationTriggerReached={() => fetchPasswords(query, page + 1)}
           />
         </div>
-        <div className={cn(styles.passwordEditorContainer, !selectedPassword && styles.editorNotOpen)}>
+        <div className={cn(styles.passwordEditorContainer, !!selectedPassword && styles.active)}>
           {selectedPassword ? (
             <PasswordEditor key={selectedPassword._id} />
           ) : (

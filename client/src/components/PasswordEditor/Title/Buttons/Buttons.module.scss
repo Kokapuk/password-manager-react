@@ -1,41 +1,41 @@
 @import 'src/styles/vars';
 
-.header {
+.container {
   display: flex;
-  justify-content: end;
   gap: 10px;
-  margin-bottom: 25px;
 
   &.enter {
     opacity: 0;
+    scale: .95;
     pointer-events: none;
   }
 
   &.enterActive {
     opacity: 1;
+    scale: 1;
     pointer-events: none;
 
-    @include transition(opacity);
+    @include transition(opacity, scale);
   }
 
   &.exit {
     opacity: 1;
+    scale: 1;
     pointer-events: none;
   }
 
   &.exitActive {
     opacity: 0;
+    scale: .95;
     pointer-events: none;
 
-    @include transition(opacity);
+    @include transition(opacity, scale);
   }
 }
 
 .button {
-  gap: 5px;
-  background-color: rgba(255, 255, 255, 0.065) !important;
-
-  .icon {
-    color: rgba(255, 255, 255, 0.5);
-  }
+  font-size: 22px !important;
+  background-color: transparent !important;
+  height: fit-content !important;
+  color: rgba(255, 255, 255, 0.5);
 }
