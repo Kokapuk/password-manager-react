@@ -1,0 +1,9 @@
+@import 'src/styles/vars';
+
+.bar {
+  -webkit-app-region: drag;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin-bottom: -15px;
+}

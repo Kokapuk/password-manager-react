@@ -1,5 +1,3 @@
-export type AuthType = 'Sign Up' | 'Sign In';
-
 export interface FieldDTO {
   title: string;
   value: string;

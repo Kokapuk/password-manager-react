@@ -3,19 +3,22 @@ import { ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { HiMiniXMark } from 'react-icons/hi2';
 import { CSSTransition } from 'react-transition-group';
+import isDesktopApp from '../../utils/isDesktopApp';
 import Button, { ButtonProps } from '../Button';
+import { titleBarHeight } from '../TitleBar';
 import styles from './Modal.module.scss';
 
 interface Props {
   isOpen: boolean;
   title: string;
   children: ReactNode;
-  onCloseRequest?(): void;
   buttons?: ({ title: string; secondary?: boolean } & ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>)[];
   fullHeight?: boolean;
+  containerClass?: string;
+  onCloseRequest?(): void;
 }
 
-const Modal = ({ isOpen, title, children, onCloseRequest, buttons, fullHeight }: Props) => {
+const Modal = ({ isOpen, title, children, buttons, fullHeight, containerClass, onCloseRequest }: Props) => {
   const [containerState, setContainerState] = useState<'shown' | 'hidden'>('hidden');
 
   useEffect(() => {
@@ -53,8 +56,8 @@ const Modal = ({ isOpen, title, children, onCloseRequest, buttons, fullHeight }:
       onEnter={() => setContainerState('shown')}
       onExit={() => setContainerState('hidden')}
     >
-      <div className={cn(styles.background)}>
-        <div className={cn(styles.container, styles[containerState], fullHeight && styles.fullHeight)}>
+      <div className={styles.background} style={isDesktopApp() ? { top: titleBarHeight } : undefined}>
+        <div className={cn(styles.container, styles[containerState], fullHeight && styles.fullHeight, containerClass)}>
           <header className={styles.header}>
             <h2>{title}</h2>
             {onCloseRequest && (

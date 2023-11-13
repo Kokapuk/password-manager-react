@@ -7,6 +7,7 @@ import Modal from '../../Modal';
 import PasswordList from '../../PasswordList';
 import PasswordSkeleton from '../../PasswordSkeleton';
 import Search from '../../Search';
+import styles from './IntegrationModal.module.scss';
 
 const IntegrationModal = () => {
   const { selectedPassword, draftPassword, isIntegrationModalOpen, setDraftPassword, setIntegrationModalOpen } =
@@ -99,6 +100,7 @@ const IntegrationModal = () => {
       isOpen={isIntegrationModalOpen}
       title="Select integration"
       fullHeight
+      containerClass={styles.modal}
     >
       {isIntegrationModalOpen && (
         <Search totalCount={totalCount ? totalCount - 1 : totalCount} noButtons onQueryUpdate={fetchPasswords} />

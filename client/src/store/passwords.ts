@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import api from '../utils/api';
 import { Password } from '../utils/types';
+import useAuthStore from './auth';
 
 export interface PasswordsState {
   passwords: Password[];
@@ -31,6 +32,7 @@ const usePasswordsStore = create<PasswordsState>((set, get) => ({
     if (
       (!initialFetch && get().isFetching) ||
       get().isFailedToFetch ||
+      !useAuthStore.getState().token ||
       (get().totalCount !== undefined &&
         query === get().query &&
         get().passwords.length >= (get().totalCount as number))
@@ -61,6 +63,7 @@ const usePasswordsStore = create<PasswordsState>((set, get) => ({
         set({
           isFailedToFetch: false,
           retryDelay: get().retryDelay < 40000 ? get().retryDelay * 2 : get().retryDelay,
+          page: 1
         });
       }, get().retryDelay);
     } finally {

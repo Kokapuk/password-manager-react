@@ -1,0 +1,7 @@
+@import 'src/styles/screen';
+
+.modal {
+  @include desktopAndTablet {
+    width: 550px;
+  }
+}

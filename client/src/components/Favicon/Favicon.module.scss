@@ -4,9 +4,6 @@
 .container {
   height: 100%;
   aspect-ratio: 1/1;
-  flex-shrink: 0;
-  flex-grow: 0;
-  overflow: hidden;
 
   @include transition(border-radius, background-color);
 
