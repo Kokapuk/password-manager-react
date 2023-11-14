@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { AuthType } from '../pages/Auth';
 import useAuthStore from '../store/auth';
-import { AuthType, Password, PasswordDTO } from './types';
+import { Password, PasswordDTO } from './types';
 
 const api = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -38,7 +39,7 @@ export const saveToken = (token: string | null) => {
 
 const auth = async (login: string, password: string, authType: AuthType) => {
   try {
-    const response = await api.post(authType === 'Sign Up' ? '/auth/signUp' : '/auth/signIn', { login, password });
+    const response = await api.post(authType === 'signUp' ? '/auth/signUp' : '/auth/signIn', { login, password });
     saveToken(response.data.token);
   } catch (err) {
     console.error(err);

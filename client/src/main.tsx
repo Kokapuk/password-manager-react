@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import TitleBar from './components/TitleBar';
 import Auth from './pages/Auth/Auth';
-import Home from './pages/Home/Home';
+import Home from './pages/Home';
 import './styles/index.scss';
 import { setToken } from './utils/api';
 

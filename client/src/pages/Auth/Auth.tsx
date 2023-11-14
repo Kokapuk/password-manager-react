@@ -3,6 +3,7 @@ import cn from 'classnames';
 import { useState } from 'react';
 import { HiMiniLockClosed, HiMiniUser } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
+import { AuthType } from '.';
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import useRedirect from '../../hooks/useRedirect';
@@ -10,7 +11,7 @@ import api from '../../utils/api';
 import styles from './Auth.module.scss';
 
 interface Props {
-  authType: 'signUp' | 'signIn';
+  authType: AuthType;
 }
 
 const Auth = ({ authType }: Props) => {
