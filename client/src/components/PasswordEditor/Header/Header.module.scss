@@ -35,7 +35,9 @@
   gap: 5px;
   background-color: rgba(255, 255, 255, 0.065) !important;
 
-  .icon {
-    color: rgba(255, 255, 255, 0.5);
+  &[data-loading=false] {
+    .icon {
+      color: rgba(255, 255, 255, 0.5);
+    }
   }
 }

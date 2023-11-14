@@ -46,30 +46,16 @@
   }
 }
 
-.spinner {
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
   position: absolute;
-  top: auto;
-  left: auto;
+  left: 0;
+  right: 0;
   height: 70%;
-  aspect-ratio: 1/1;
-  border: 3px solid white;
-  border-bottom-color: transparent;
-  border-radius: 50%;
-  opacity: 0;
 
-  @include transition(opacity);
-
-  &.visible {
-    opacity: 1;
-    animation: 750ms spin linear infinite;
-  }
-}
-
-@keyframes spin {
-  from {
-    rotate: 0deg;
-  }
-  to {
-    rotate: 360deg;
+  div {
+    border-color: rgba(255, 255, 255, 0.75);
+    border-bottom-color: transparent;
   }
 }

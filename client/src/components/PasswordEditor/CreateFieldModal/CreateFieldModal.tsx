@@ -1,10 +1,10 @@
-import { Types } from 'mongoose';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { HiMiniLockClosed } from 'react-icons/hi2';
 import useEditorStore from '../../../store/editor';
 import { Field, Password } from '../../../utils/types';
 import Modal from '../../Modal';
 import TextInput from '../../TextInput';
+import { Types } from 'mongoose';
 
 const CreateFieldModal = () => {
   const { isCreateFieldModalOpen, setDraftPassword, setCreateFieldModalOpen } = useEditorStore();
@@ -18,7 +18,7 @@ const CreateFieldModal = () => {
     }
   }, [isCreateFieldModalOpen]);
 
-  const createField = () => {
+  const createField = async () => {
     if (newFieldTitle.trim() === '') {
       return;
     }
@@ -31,7 +31,7 @@ const CreateFieldModal = () => {
       }
 
       const field: Field = {
-        _id: new Types.ObjectId().toString(),
+        _id:  new Types.ObjectId().toString(),
         title: newFieldTitle,
         isPassword: newFieldTitle.toLocaleLowerCase().includes('password'),
         value: '',

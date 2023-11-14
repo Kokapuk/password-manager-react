@@ -1,7 +1,7 @@
 import cn from 'classnames';
-import { debounce } from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './Favicon.module.scss';
+import debounce from 'lodash/debounce';
 
 interface Props {
   website: string;

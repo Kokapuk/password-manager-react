@@ -1,4 +1,4 @@
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HiMiniMagnifyingGlass, HiMiniXMark } from 'react-icons/hi2';
 import Button from '../Button';

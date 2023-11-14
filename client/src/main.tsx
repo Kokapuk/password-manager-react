@@ -1,17 +1,49 @@
+/* eslint-disable react-refresh/only-export-components */
+
+import { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import LoadingSpinner from './components/LoadingSpinner';
 import TitleBar from './components/TitleBar';
-import Auth from './pages/Auth/Auth';
-import Home from './pages/Home';
 import './styles/index.scss';
 import { setToken } from './utils/api';
+
+const Auth = lazy(() => import('./pages/Auth'));
+const Home = lazy(() => import('./pages/Home'));
+
+const suspenseFallback = (
+  <div id="spinnerContainer">
+    <LoadingSpinner size={60} lineWidth={6} />
+  </div>
+);
 
 setToken(sessionStorage.getItem('token'));
 
 const router = createBrowserRouter([
-  { path: '/signUp', element: <Auth authType="signUp" /> },
-  { path: '/signIn', element: <Auth authType="signIn" /> },
-  { path: '/', element: <Home /> },
+  {
+    path: '/signUp',
+    element: (
+      <Suspense fallback={suspenseFallback}>
+        <Auth authType="signUp" />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/signIn',
+    element: (
+      <Suspense fallback={suspenseFallback}>
+        <Auth authType="signIn" />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/',
+    element: (
+      <Suspense fallback={suspenseFallback}>
+        <Home />
+      </Suspense>
+    ),
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
