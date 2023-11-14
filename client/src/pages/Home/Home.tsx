@@ -10,11 +10,19 @@ import styles from './Home.module.scss';
 
 const Home = () => {
   const { selectedPassword, setSelectedPassword } = useEditorStore();
-  const { passwords, isFetching, page, totalCount, query, fetch: fetchPasswords } = usePasswordsStore();
+  const {
+    passwords,
+    isFetching,
+    isFetchFailed,
+    totalCount,
+    query,
+    fetch: fetchPasswords,
+    paginate: paginatePasswords,
+  } = usePasswordsStore();
   useRedirect('authOnly');
 
   useEffect(() => {
-    fetchPasswords(undefined, undefined, true);
+    fetchPasswords(undefined, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -26,10 +34,11 @@ const Home = () => {
           <PasswordList
             passwords={passwords}
             isFetching={isFetching}
+            isFetchFailed={isFetchFailed}
             query={query}
             selectedPasswordId={selectedPassword?._id}
             onPasswordSelect={setSelectedPassword}
-            onPaginationTriggerReached={() => fetchPasswords(query, page + 1)}
+            onPaginationTriggerReached={paginatePasswords}
           />
         </div>
         <div className={cn(styles.passwordEditorContainer, !!selectedPassword && styles.active)}>

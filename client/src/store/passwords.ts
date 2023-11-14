@@ -6,19 +6,18 @@ import useAuthStore from './auth';
 export interface PasswordsState {
   passwords: Password[];
   isFetching: boolean;
-  isFailedToFetch: boolean;
-  retryDelay: number;
+  isFetchFailed: boolean;
   page: number;
   totalCount?: number;
   query: string;
-  fetch(query?: string, page?: number, initialFetch?: boolean): Promise<void>;
+  fetch(query?: string, initialFetch?: boolean): Promise<void>;
+  paginate(): void;
 }
 
-export const getDefaultPasswordsState = (): Omit<PasswordsState, 'fetch'> => ({
+export const getDefaultPasswordsState = (): Omit<PasswordsState, 'fetch' | 'paginate'> => ({
   passwords: [],
   isFetching: true,
-  isFailedToFetch: false,
-  retryDelay: 5000,
+  isFetchFailed: false,
   page: 1,
   totalCount: undefined,
   query: '',
@@ -28,44 +27,49 @@ export const limitPerPage = 30;
 
 const usePasswordsStore = create<PasswordsState>((set, get) => ({
   ...getDefaultPasswordsState(),
-  async fetch(query = '', page = 1, initialFetch = false) {
-    if (
-      (!initialFetch && get().isFetching) ||
-      get().isFailedToFetch ||
-      !useAuthStore.getState().token ||
-      (get().totalCount !== undefined &&
-        query === get().query &&
-        get().passwords.length >= (get().totalCount as number))
-    ) {
+  async fetch(query = '', initialFetch = false) {
+    if (get().isFetchFailed || (!initialFetch && get().isFetching) || !useAuthStore.getState().token) {
       return;
     }
 
-    if (query !== get().query) {
-      set({ passwords: [] });
+    set({ isFetching: true, passwords: [] });
+
+    try {
+      const [totalCount, newPasswords] = await api.findAll(query, limitPerPage, 1);
+      set((state) => ({
+        ...state,
+        passwords: newPasswords,
+        totalCount,
+        query,
+      }));
+    } catch {
+      set({ isFetchFailed: true });
+    } finally {
+      set({ isFetching: false, page: 1 });
+    }
+  },
+  async paginate() {
+    if (
+      get().isFetchFailed ||
+      get().isFetching ||
+      !useAuthStore.getState().token ||
+      get().passwords.length >= (get().totalCount as number)
+    ) {
+      return;
     }
 
     set({ isFetching: true });
 
     try {
-      const [totalCount, newPasswords] = await api.findAll(query, limitPerPage, page);
+      const [totalCount, newPasswords] = await api.findAll(get().query, limitPerPage, get().page + 1);
       set((state) => ({
         ...state,
-        passwords: page === 1 ? newPasswords : [...state.passwords, ...newPasswords],
-        retryDelay: 5000,
-        page,
+        passwords: [...state.passwords, ...newPasswords],
         totalCount,
-        query,
+        page: get().page + 1,
       }));
     } catch {
-      set({ isFailedToFetch: true });
-
-      setTimeout(() => {
-        set({
-          isFailedToFetch: false,
-          retryDelay: get().retryDelay < 40000 ? get().retryDelay * 2 : get().retryDelay,
-          page: 1
-        });
-      }, get().retryDelay);
+      set({ passwords: [], isFetchFailed: true });
     } finally {
       set({ isFetching: false });
     }

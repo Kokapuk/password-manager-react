@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import useAuthStore from '../../../store/auth';
 import useEditorStore from '../../../store/editor';
 import { limitPerPage } from '../../../store/passwords';
 import api from '../../../utils/api';
 import { Password } from '../../../utils/types';
 import Modal from '../../Modal';
 import PasswordList from '../../PasswordList';
-import PasswordSkeleton from '../../PasswordSkeleton';
 import Search from '../../Search';
 import styles from './IntegrationModal.module.scss';
 
@@ -15,65 +15,62 @@ const IntegrationModal = () => {
   const [totalCount, setTotalCount] = useState<number | undefined>(undefined);
   const [passwords, setPasswords] = useState<Password[]>([]);
   const [isFetching, setFetching] = useState(true);
-  const [isFailedToFetch, setFailedToFetch] = useState(false);
-  const [retryDelay, setRetryDelay] = useState(5000);
+  const [isFetchFailed, setFetchFailed] = useState(false);
   const [query, setQuery] = useState('');
   const page = useRef(1);
 
-  useEffect(() => {
-    if (!isIntegrationModalOpen) {
-      return;
-    }
-
-    (async () => {
-      try {
-        const [totalCount, passwords] = await api.findAll('', limitPerPage, 1);
-        setTotalCount(totalCount);
-        setPasswords(passwords);
-        setQuery('');
-        page.current = 1;
-      } finally {
-        setFetching(false);
-      }
-    })();
-  }, [isIntegrationModalOpen]);
-
   const fetchPasswords = useCallback(
-    async (fetchQuery = '', fetchPage = 1) => {
-      if (
-        isFetching ||
-        isFailedToFetch ||
-        (totalCount !== undefined && fetchQuery === query && passwords.length >= totalCount)
-      ) {
+    async (query = '') => {
+      if (isFetchFailed || !useAuthStore.getState().token) {
         return;
       }
 
-      if (fetchQuery !== query) {
-        setPasswords([]);
-      }
-
       setFetching(true);
+      setPasswords([]);
 
       try {
-        const [totalCount, newPasswords] = await api.findAll(fetchQuery, limitPerPage, fetchPage);
-        setPasswords((prev) => (fetchPage === 1 ? newPasswords : [...prev, ...newPasswords]));
-        setRetryDelay(5000);
-        page.current = fetchPage;
+        const [totalCount, newPasswords] = await api.findAll(query, limitPerPage, 1);
+        setPasswords(newPasswords);
         setTotalCount(totalCount);
-        setQuery(fetchQuery);
+        setQuery(query);
       } catch {
-        setFailedToFetch(true);
-
-        setTimeout(() => {
-          setFailedToFetch(false);
-          setRetryDelay((prev) => (prev < 40000 ? prev * 2 : prev));
-        }, retryDelay);
+        setFetchFailed(true);
       } finally {
         setFetching(false);
+        page.current = 1;
       }
     },
-    [isFailedToFetch, isFetching, passwords.length, query, retryDelay, totalCount]
+    [isFetchFailed]
   );
+
+  useEffect(() => {
+    if (!isIntegrationModalOpen || passwords.length) {
+      return;
+    }
+
+    fetchPasswords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchPasswords, isIntegrationModalOpen]);
+
+  const paginatePasswords = useCallback(async () => {
+    if (isFetchFailed || isFetching || !useAuthStore.getState().token || passwords.length >= (totalCount as number)) {
+      return;
+    }
+
+    setFetching(true);
+
+    try {
+      const [totalCount, newPasswords] = await api.findAll(query, limitPerPage, page.current + 1);
+      setPasswords((prev) => [...prev, ...newPasswords]);
+      setTotalCount(totalCount);
+      page.current++;
+    } catch {
+      setPasswords([]);
+      setFetchFailed(true);
+    } finally {
+      setFetching(false);
+    }
+  }, [isFetchFailed, isFetching, passwords.length, query, totalCount]);
 
   if (!selectedPassword) {
     return null;
@@ -90,10 +87,6 @@ const IntegrationModal = () => {
     setIntegrationModalOpen(false);
   };
 
-  const handlePaginationTriggerReached = () => {
-    fetchPasswords(query, page.current + 1);
-  };
-
   return (
     <Modal
       onCloseRequest={() => setIntegrationModalOpen(false)}
@@ -102,23 +95,18 @@ const IntegrationModal = () => {
       fullHeight
       containerClass={styles.modal}
     >
-      {isIntegrationModalOpen && (
+      <div className={styles.container}>
         <Search totalCount={totalCount ? totalCount - 1 : totalCount} noButtons onQueryUpdate={fetchPasswords} />
-      )}
-      {isIntegrationModalOpen ? (
         <PasswordList
           selectedPasswordId={draftPassword?.credentials.integration?._id}
           passwords={passwords.filter((item) => item._id !== selectedPassword._id)}
           isFetching={isFetching}
+          isFetchFailed={isFetchFailed}
           query={query}
           onPasswordSelect={handleIntegrationSelect}
-          onPaginationTriggerReached={handlePaginationTriggerReached}
+          onPaginationTriggerReached={paginatePasswords}
         />
-      ) : (
-        Array(20)
-          .fill(0)
-          .map((_item, index) => <PasswordSkeleton key={index} />)
-      )}
+      </div>
     </Modal>
   );
 };

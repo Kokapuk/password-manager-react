@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { HiMiniLockClosed } from 'react-icons/hi2';
 import useEditorStore from '../../../store/editor';
 import { Field, Password } from '../../../utils/types';
@@ -10,6 +10,7 @@ const CreateFieldModal = () => {
   const { isCreateFieldModalOpen, setDraftPassword, setCreateFieldModalOpen } = useEditorStore();
   const newFieldInput = useRef<HTMLInputElement>(null);
   const [newFieldTitle, setNewFieldTitle] = useState('');
+  const form = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (isCreateFieldModalOpen && newFieldInput.current) {
@@ -43,21 +44,36 @@ const CreateFieldModal = () => {
     setCreateFieldModalOpen(false);
   };
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    createField();
+  };
+
   return (
     <Modal
       onCloseRequest={() => setCreateFieldModalOpen(false)}
       isOpen={isCreateFieldModalOpen}
       title="Create new field"
-      buttons={[{ title: 'Create', onClick: createField }]}
+      buttons={[
+        {
+          title: 'Create',
+          onClick: () => (form.current?.checkValidity() ? createField() : form.current?.reportValidity()),
+        },
+      ]}
     >
-      <TextInput
-        ref={newFieldInput}
-        onChange={(e) => setNewFieldTitle(e.target.value.trimStart())}
-        value={newFieldTitle}
-        icon={<HiMiniLockClosed />}
-        type="text"
-        placeholder="Title"
-      />
+      <form ref={form} onSubmit={handleSubmit}>
+        <TextInput
+          ref={newFieldInput}
+          onChange={(e) => setNewFieldTitle(e.target.value.trimStart())}
+          value={newFieldTitle}
+          icon={<HiMiniLockClosed />}
+          type="text"
+          placeholder="Title"
+          required
+          minLength={1}
+        />
+        <button style={{ display: 'none' }} type="submit" />
+      </form>
     </Modal>
   );
 };

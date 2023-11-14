@@ -19,7 +19,7 @@ const Header = () => {
     setLoading,
     setDeleteModalOpen,
   } = useEditorStore();
-  const fetchPasswords = usePasswordsStore((state) => state.fetch);
+  const { query, fetch: fetchPasswords } = usePasswordsStore();
 
   if (!selectedPassword || !draftPassword) {
     return null;
@@ -39,7 +39,7 @@ const Header = () => {
         credentials: draftPassword.credentials,
         website: draftPassword.website,
       });
-      fetchPasswords();
+      fetchPasswords(query);
     } finally {
       setEditing(false);
       setLoading(false);

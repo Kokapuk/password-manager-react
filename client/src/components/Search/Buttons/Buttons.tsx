@@ -18,7 +18,7 @@ const Buttons = () => {
             <HiMiniPlus />
           </Button>
         </Tooltip>
-        {!isDesktopApp() && (
+        {!isDesktopApp() && navigator.userAgent.toLowerCase().includes('windows') && (
           <Tooltip content="Download for Windows" placement="bottom">
             <a
               href="https://github.com/Kokapuk/desktop-password-manager/releases"

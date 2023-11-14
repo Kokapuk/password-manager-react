@@ -13,7 +13,7 @@ const DeleteModal = () => {
     setLoading,
     setDeleteModalOpen,
   } = useEditorStore();
-  const fetchPasswords = usePasswordsStore((state) => state.fetch);
+  const { query, fetch: fetchPasswords } = usePasswordsStore();
 
   if (!selectedPassword || !draftPassword) {
     return null;
@@ -26,7 +26,7 @@ const DeleteModal = () => {
     try {
       await api.remove(draftPassword._id);
       setSelectedPassword(null);
-      fetchPasswords();
+      fetchPasswords(query);
     } finally {
       setEditing(false);
       setLoading(false);

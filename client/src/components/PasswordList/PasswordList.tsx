@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { limitPerPage } from '../../store/passwords';
+import isDesktopApp from '../../utils/isDesktopApp';
 import { Password as PasswordType } from '../../utils/types';
 import Password from '../Password';
 import PasswordSkeleton from '../PasswordSkeleton';
@@ -8,6 +9,7 @@ import styles from './PasswordList.module.scss';
 interface Props {
   passwords: PasswordType[];
   isFetching: boolean;
+  isFetchFailed: boolean;
   query: string;
   selectedPasswordId?: string;
   onPasswordSelect?(password: PasswordType): void;
@@ -17,6 +19,7 @@ interface Props {
 const PasswordList = ({
   passwords,
   isFetching,
+  isFetchFailed,
   query,
   selectedPasswordId,
   onPasswordSelect,
@@ -26,10 +29,10 @@ const PasswordList = ({
   const paginationTrigger = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isFetching && passwords.length === 0) {
+    if (passwords.length === 0) {
       list.current?.scrollTo({ top: 0 });
     }
-  }, [isFetching, passwords.length]);
+  }, [passwords.length]);
 
   useEffect(() => {
     if (isFetching) {
@@ -73,7 +76,15 @@ const PasswordList = ({
       {!isFetching && <div ref={paginationTrigger} data-pagination-trigger style={{ height: 1, flexShrink: 0 }} />}
       {isFetching && new Array(limitPerPage).fill(0).map((_item, index) => <PasswordSkeleton key={index} />)}
       {!isFetching && passwords.length === 0 && (
-        <p className={styles.emptyPlaceholder}>{query ? 'Nothing found' : 'Nothing yet'}</p>
+        <p className={styles.emptyPlaceholder}>
+          {isFetchFailed
+            ? `Something went wrong, try ${
+                isDesktopApp() ? 'reloading the app' : 'refreshing the page'
+              }. If this error persists, please try again later.`
+            : query
+            ? 'Nothing found'
+            : 'Nothing yet'}
+        </p>
       )}
     </div>
   );
