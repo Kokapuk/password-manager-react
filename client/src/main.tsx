@@ -8,6 +8,10 @@ import TitleBar from './components/TitleBar';
 import './styles/index.scss';
 import { setToken } from './utils/api';
 
+if (!import.meta.env.DEV && import.meta.env.VITE_APP_PROTOCOL) {
+  window.location.href = `${import.meta.env.VITE_APP_PROTOCOL}://`;
+}
+
 const Auth = lazy(() => import('./pages/Auth'));
 const Home = lazy(() => import('./pages/Home'));
 

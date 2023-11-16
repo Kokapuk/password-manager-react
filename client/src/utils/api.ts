@@ -16,6 +16,9 @@ api.interceptors.response.use(
   }
 );
 
+const tokenExpirationTime = 3540000;
+let tokenExpirationTimeout: NodeJS.Timeout | null = null;
+
 export const setToken = (token: string | null) => {
   useAuthStore.setState({ token });
 
@@ -35,6 +38,10 @@ export const saveToken = (token: string | null) => {
   }
 
   sessionStorage.setItem('token', token);
+  tokenExpirationTimeout && clearTimeout(tokenExpirationTimeout);
+  tokenExpirationTimeout = setTimeout(() => {
+    saveToken(null);
+  }, tokenExpirationTime);
 };
 
 const auth = async (login: string, password: string, authType: AuthType) => {
