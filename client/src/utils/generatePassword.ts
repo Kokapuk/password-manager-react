@@ -1,7 +1,7 @@
 const passwordLength = 20;
 
 export default () => {
-  const characterSet = ' 1234567890qwertyuiopasdfghjklzxcvbnm!#$&*';
+  const characterSet = '1234567890qwertyuiopasdfghjklzxcvbnm!#$&*';
   let password = '';
 
   while (password.length < passwordLength + 1) {

@@ -7,7 +7,7 @@ import Integration from '../Integration';
 import styles from './Credentials.module.scss';
 
 const Credentials = () => {
-  const { isEditing, draftPassword, setDraftPassword } = useEditorStore();
+  const { selectedPassword, isEditing, draftPassword, setDraftPassword } = useEditorStore();
 
   if (!draftPassword) {
     return null;
@@ -47,7 +47,7 @@ const Credentials = () => {
     });
   };
 
-  const handleDeleteField = (id: string) => {
+  const handleFieldRemove = (id: string) => {
     setDraftPassword((prev) => {
       const prevState: PasswordType = JSON.parse(JSON.stringify(prev));
 
@@ -75,13 +75,19 @@ const Credentials = () => {
               exitActive: styles.fieldExitActive,
             }}
           >
-            <Field
-              onInput={(value) => handleFieldInput(field._id, value)}
-              onToggleShow={() => handleFieldToggleShow(field._id)}
-              onDelete={() => handleDeleteField(field._id)}
-              field={field}
-              readOnly={!isEditing}
-            />
+            <>
+              <Field
+                onInput={(value) => handleFieldInput(field._id, value)}
+                onToggleShow={
+                  isEditing || selectedPassword?.credentials.fields?.find((item) => item._id === field._id)?.isPassword
+                    ? () => handleFieldToggleShow(field._id)
+                    : undefined
+                }
+                onRemove={() => handleFieldRemove(field._id)}
+                field={field}
+                readOnly={!isEditing}
+              />
+            </>
           </CSSTransition>
         ))}
       </TransitionGroup>

@@ -43,6 +43,7 @@ const Header = () => {
     } finally {
       setEditing(false);
       setLoading(false);
+      setSelectedPassword(null);
     }
   };
 

@@ -18,11 +18,11 @@ interface Props {
   website?: boolean;
   onInput(value: string): void;
   onToggleShow?(): void;
-  onDelete?(): void;
+  onRemove?(): void;
   onBlur?(): void;
 }
 
-const Field = ({ field, readOnly, website, onInput, onToggleShow, onDelete, onBlur }: Props) => {
+const Field = ({ field, readOnly, website, onInput, onToggleShow, onRemove, onBlur }: Props) => {
   return (
     <div className={styles.container}>
       <p className={styles.title}>{field.title}</p>
@@ -38,7 +38,7 @@ const Field = ({ field, readOnly, website, onInput, onToggleShow, onDelete, onBl
         {!website && !readOnly && (
           <>
             <Tooltip content="Delete field" placement="top">
-              <Button onClick={onDelete} className={styles.button}>
+              <Button onClick={onRemove} className={styles.button}>
                 <HiMiniTrash />
               </Button>
             </Tooltip>
@@ -49,7 +49,7 @@ const Field = ({ field, readOnly, website, onInput, onToggleShow, onDelete, onBl
             </Tooltip>
           </>
         )}
-        {!website && (
+        {!website && onToggleShow && (
           <Tooltip content={field.isPassword ? 'Show' : 'Hide'} placement="top">
             <Button onClick={onToggleShow} className={styles.button}>
               {field.isPassword ? <HiMiniEye /> : <HiMiniEyeSlash />}

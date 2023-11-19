@@ -7,8 +7,9 @@ import LoadingSpinner from './components/LoadingSpinner';
 import TitleBar from './components/TitleBar';
 import './styles/index.scss';
 import { setToken } from './utils/api';
+import isDesktopApp from './utils/isDesktopApp';
 
-if (!import.meta.env.DEV && import.meta.env.VITE_APP_PROTOCOL) {
+if (!import.meta.env.DEV && import.meta.env.VITE_APP_PROTOCOL && !isDesktopApp()) {
   window.location.href = `${import.meta.env.VITE_APP_PROTOCOL}://`;
 }
 

@@ -12,7 +12,7 @@ interface Props {
 }
 
 const Password = ({ password, isSelected, className, onClick }: Props) => {
-  const firstFieldValue = password.credentials.fields?.[0]?.value;
+  const firstFieldValue = password.credentials.fields?.find((item) => !item.isPassword)?.value;
   const caption = firstFieldValue
     ? firstFieldValue.substring(0, Math.floor(firstFieldValue.length / 2)) +
       '*'.repeat(firstFieldValue.length - Math.floor(firstFieldValue.length / 2))
