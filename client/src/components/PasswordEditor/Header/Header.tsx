@@ -67,29 +67,25 @@ const Header = () => {
         >
           <div className={styles.header}>
             {isEditing ? (
-              <>
-                <Button loading={isLoading} onClick={savePassword} className={styles.button}>
-                  <HiMiniCheckCircle /> Save
-                </Button>
-                <Button loading={isLoading} onClick={() => setDeleteModalOpen(true)} className={styles.button}>
-                  <HiMiniTrash /> Delete
-                </Button>
-                <Button onClick={onCancel} className={styles.button}>
-                  <HiMiniXMark /> Cancel
-                </Button>
-              </>
+              <Button loading={isLoading} onClick={savePassword} className={styles.button}>
+                <HiMiniCheckCircle /> Save
+              </Button>
             ) : (
-              <>
-                <Button loading={isLoading} onClick={() => setEditing(true)} className={styles.button}>
-                  <HiMiniPencil /> Edit
-                </Button>
-                <Button loading={isLoading} onClick={() => setDeleteModalOpen(true)} className={styles.button}>
-                  <HiMiniTrash /> Delete
-                </Button>
-                <Button onClick={() => setSelectedPassword(null)} className={styles.button}>
-                  <HiMiniXMark /> Close
-                </Button>
-              </>
+              <Button loading={isLoading} onClick={() => setEditing(true)} className={styles.button}>
+                <HiMiniPencil /> Edit
+              </Button>
+            )}
+            <Button loading={isLoading} onClick={() => setDeleteModalOpen(true)} className={styles.button}>
+              <HiMiniTrash /> Delete
+            </Button>
+            {isEditing ? (
+              <Button onClick={onCancel} className={styles.button}>
+                <HiMiniXMark /> Cancel
+              </Button>
+            ) : (
+              <Button onClick={() => setSelectedPassword(null)} className={styles.button}>
+                <HiMiniXMark /> Close
+              </Button>
             )}
           </div>
         </CSSTransition>

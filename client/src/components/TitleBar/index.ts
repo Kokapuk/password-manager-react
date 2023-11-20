@@ -1,3 +1,3 @@
 export { default } from './TitleBar';
 
-export const titleBarHeight = 31;
+export const titleBarHeight = 30;

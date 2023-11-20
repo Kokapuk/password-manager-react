@@ -7,13 +7,11 @@
   &.enter {
     opacity: 0;
     scale: .95;
-    pointer-events: none;
   }
 
   &.enterActive {
     opacity: 1;
     scale: 1;
-    pointer-events: none;
 
     @include transition(opacity, scale);
   }

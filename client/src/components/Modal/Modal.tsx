@@ -3,9 +3,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { HiMiniXMark } from 'react-icons/hi2';
 import { CSSTransition } from 'react-transition-group';
-import isDesktopApp from '../../utils/isDesktopApp';
 import Button, { ButtonProps } from '../Button';
-import { titleBarHeight } from '../TitleBar';
 import styles from './Modal.module.scss';
 
 interface Props {
@@ -56,7 +54,7 @@ const Modal = ({ isOpen, title, children, buttons, fullHeight, containerClass, o
       onEnter={() => setContainerState('shown')}
       onExit={() => setContainerState('hidden')}
     >
-      <div className={styles.background} style={isDesktopApp() ? { top: titleBarHeight } : undefined}>
+      <div className={styles.background}>
         <div className={cn(styles.container, styles[containerState], fullHeight && styles.fullHeight, containerClass)}>
           <header className={styles.header}>
             <h2>{title}</h2>
@@ -79,7 +77,7 @@ const Modal = ({ isOpen, title, children, buttons, fullHeight, containerClass, o
         </div>
       </div>
     </CSSTransition>,
-    document.querySelector('#modal-portal') as HTMLElement
+    document.getElementById('modalPortal') as HTMLElement
   );
 };
 

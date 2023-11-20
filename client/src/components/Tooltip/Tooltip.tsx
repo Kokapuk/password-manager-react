@@ -112,7 +112,7 @@ const Tooltip = ({ content, children, placement, containerClass }: Props) => {
             <p className={styles.content}>{content}</p>
           </span>
         </CSSTransition>,
-        document.querySelector('#tooltip-portal') as HTMLDivElement
+        document.getElementById('tooltipPortal') as HTMLElement
       )}
     </div>
   );

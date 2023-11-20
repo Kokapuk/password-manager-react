@@ -8,12 +8,10 @@
 
   &.enter {
     opacity: 0;
-    pointer-events: none;
   }
 
   &.enterActive {
     opacity: 1;
-    pointer-events: none;
 
     @include transition(opacity);
   }

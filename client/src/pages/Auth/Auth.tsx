@@ -16,9 +16,10 @@ interface Props {
 
 const Auth = ({ authType }: Props) => {
   const [error, setError] = useState('');
-  const [credentials, setCredentials] = useState<{ login: string; password: string }>({
+  const [credentials, setCredentials] = useState<{ login: string; password: string; confirmPassword: string }>({
     login: authType === 'signIn' ? localStorage.getItem('login') ?? '' : '',
     password: '',
+    confirmPassword: '',
   });
   const [isLoading, setLoading] = useState(false);
   const authTitle = authType === 'signUp' ? 'Sign Up' : 'Sign In';
@@ -28,6 +29,11 @@ const Auth = ({ authType }: Props) => {
     event.preventDefault();
     setLoading(true);
     setError('');
+
+    if (authType === 'signUp' && credentials.password !== credentials.confirmPassword) {
+      setError("Passwords don't match");
+      return setLoading(false);
+    }
 
     try {
       await api.auth(credentials.login, credentials.password, authType);
@@ -65,6 +71,17 @@ const Auth = ({ authType }: Props) => {
           placeholder="Password"
           icon={<HiMiniLockClosed />}
         />
+        {authType === 'signUp' && (
+          <TextInput
+            value={credentials.confirmPassword}
+            onChange={(e) => setCredentials((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+            required
+            minLength={6}
+            type="password"
+            placeholder="Confirm password"
+            icon={<HiMiniLockClosed />}
+          />
+        )}
         {error && <p className={styles.error}>{error}&nbsp;</p>}
         <div className={styles.buttonsContainer}>
           <Button loading={isLoading} className={styles.button}>

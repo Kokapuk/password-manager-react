@@ -4,10 +4,10 @@ import { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import LoadingSpinner from './components/LoadingSpinner';
-import TitleBar from './components/TitleBar';
 import './styles/index.scss';
 import { setToken } from './utils/api';
 import isDesktopApp from './utils/isDesktopApp';
+import TitleBar from './components/TitleBar';
 
 if (!import.meta.env.DEV && import.meta.env.VITE_APP_PROTOCOL && !isDesktopApp()) {
   window.location.href = `${import.meta.env.VITE_APP_PROTOCOL}://`;
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
     path: '/signUp',
     element: (
       <Suspense fallback={suspenseFallback}>
-        <Auth authType="signUp" />
+        <Auth key="signUp" authType="signUp" />
       </Suspense>
     ),
   },
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     path: '/signIn',
     element: (
       <Suspense fallback={suspenseFallback}>
-        <Auth authType="signIn" />
+        <Auth key="signIn" authType="signIn" />
       </Suspense>
     ),
   },
@@ -51,11 +51,9 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById('routeRoot') as HTMLElement).render(
   <>
     <TitleBar />
-    <div id="routerContainer">
-      <RouterProvider router={router} />
-    </div>
+    <RouterProvider router={router} />
   </>
 );

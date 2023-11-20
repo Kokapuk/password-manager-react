@@ -44,6 +44,32 @@
   &:active::before {
     background-color: rgba(255, 255, 255, 0.2);
   }
+
+  .ripple {
+    position: absolute;
+    aspect-ratio: 1/1;
+    width: 200%;
+    max-width: 50vw;
+    translate: -50% -50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: grow 350ms linear forwards;
+
+    @keyframes grow {
+      0% {
+        opacity: 0;
+        scale: 0;
+      }
+      50% {
+        opacity: 1;
+        scale: 0.5;
+      }
+      100% {
+        opacity: 0;
+        scale: 1;
+      }
+    }
+  }
 }
 
 .spinnerContainer {

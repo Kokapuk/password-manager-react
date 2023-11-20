@@ -10,28 +10,34 @@
   font-family: 'Inter', sans-serif;
 }
 
+img {
+  display: block;
+  max-width: 100%;
+}
+
 :root {
   color-scheme: dark;
   user-select: none;
 }
 
-#root {
+body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-#root,
-#routerContainer {
   background-color: $bg-dark;
-  min-height: 0;
 }
 
-#routerContainer {
+#root {
+  height: 100%;
+  min-height: 0;
+  position: relative;
+}
+
+#routeRoot {
   height: 100%;
 
   @include desktop {
-    padding: 50px 150px;
+    padding: 25px 150px;
   }
 
   @include tabletAndMobile {

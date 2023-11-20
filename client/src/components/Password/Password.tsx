@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import { HTMLAttributes } from 'react';
 import { Password as PasswordType } from '../../utils/types';
+import Button from '../Button';
 import Favicon from '../Favicon';
 import styles from './Password.module.scss';
 
@@ -19,13 +20,13 @@ const Password = ({ password, isSelected, className, onClick }: Props) => {
     : password.website;
 
   return (
-    <button onClick={onClick} className={cn(styles.button, isSelected && styles.selected, className)}>
+    <Button onClick={onClick} className={cn(styles.button, isSelected && styles.selected, className)}>
       <Favicon website={password.website} />
       <div className={styles.details}>
         <h2 className={styles.title}>{password.name}</h2>
-        <span className={styles.caption}>{caption}</span>
+        <p className={styles.caption}>{caption}</p>
       </div>
-    </button>
+    </Button>
   );
 };
 
