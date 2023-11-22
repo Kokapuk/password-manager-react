@@ -8,6 +8,10 @@ const TitleBar = () => {
   const [isMaximized, setMaximized] = useState(false);
 
   useEffect(() => {
+    if (!isDesktopApp()) {
+      return;
+    }
+
     window.electron.ipcRenderer.on('toggleMaximized', (_event: unknown, isMaximized: boolean) => {
       setMaximized(isMaximized);
     });
