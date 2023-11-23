@@ -2,8 +2,7 @@ import { IconContext } from 'react-icons';
 import { HiMiniCheckCircle, HiMiniPencil, HiMiniTrash, HiMiniXMark } from 'react-icons/hi2';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import useEditorStore from '../../../store/editor';
-import usePasswordsStore from '../../../store/passwords';
-import api from '../../../utils/api';
+import isExposedPasswordField from '../../../utils/isExposedPasswordField';
 import Button from '../../Button';
 import styles from './Header.module.scss';
 
@@ -16,35 +15,23 @@ const Header = () => {
     setSelectedPassword,
     setEditing,
     setDraftPassword,
-    setLoading,
+    savePassword,
     setDeleteModalOpen,
+    setExposedPasswordModalOpen,
   } = useEditorStore();
-  const { query, fetch: fetchPasswords } = usePasswordsStore();
 
   if (!selectedPassword || !draftPassword) {
     return null;
   }
 
-  const savePassword = async () => {
-    if (JSON.stringify(draftPassword) === JSON.stringify(selectedPassword)) {
-      setEditing(false);
-      return;
+  const handleSavePassword = () => {
+    const hasExposedPasswordField = draftPassword.credentials.fields?.some((item) => isExposedPasswordField(item));
+
+    if (hasExposedPasswordField) {
+      return setExposedPasswordModalOpen(true);
     }
 
-    setLoading(true);
-
-    try {
-      await api.update(draftPassword._id, {
-        name: draftPassword.name,
-        credentials: draftPassword.credentials,
-        website: draftPassword.website,
-      });
-      fetchPasswords(query);
-    } finally {
-      setEditing(false);
-      setLoading(false);
-      setSelectedPassword(null);
-    }
+    savePassword();
   };
 
   const onCancel = () => {
@@ -67,7 +54,7 @@ const Header = () => {
         >
           <div className={styles.header}>
             {isEditing ? (
-              <Button loading={isLoading} onClick={savePassword} className={styles.button}>
+              <Button loading={isLoading} onClick={handleSavePassword} className={styles.button}>
                 <HiMiniCheckCircle /> Save
               </Button>
             ) : (

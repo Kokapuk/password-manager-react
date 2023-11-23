@@ -2,6 +2,7 @@ import useEditorStore from '../../store/editor';
 import CreateFieldModal from './CreateFieldModal';
 import Credentials from './Credentials';
 import DeleteModal from './DeleteModal';
+import ExposedPasswordModal from './ExposedPasswordModal';
 import Header from './Header';
 import IntegrationModal from './IntegrationModal';
 import styles from './PasswordEditor.module.scss';
@@ -22,6 +23,7 @@ const PasswordEditor = () => {
       <CreateFieldModal />
       <IntegrationModal />
       <DeleteModal />
+      <ExposedPasswordModal />
     </div>
   );
 };

@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { Password } from '../utils/types';
+import api from '../utils/api';
+import usePasswordsStore from './passwords';
 
 export interface EditorState {
   selectedPassword: Password | null;
@@ -9,13 +11,16 @@ export interface EditorState {
   isDeleteModalOpen: boolean;
   isCreateFieldModalOpen: boolean;
   isIntegrationModalOpen: boolean;
+  isExposedPasswordModalOpen: boolean;
   setSelectedPassword(selectedPassword: Password | null): void;
   setEditing(isEditing: boolean): void;
   setLoading(isLoading: boolean): void;
   setDraftPassword(draftPassword: Password | ((prev: Password | undefined) => Password | undefined)): void;
+  savePassword(): Promise<void>;
   setDeleteModalOpen(isDeleteModalOpen: boolean): void;
   setCreateFieldModalOpen(isCreateFieldModalOpen: boolean): void;
   setIntegrationModalOpen(isIntegrationModalOpen: boolean): void;
+  setExposedPasswordModalOpen(isExposedPasswordModalOpen: boolean): void;
 }
 
 export const getDefaultEditorState = (): Omit<
@@ -24,9 +29,11 @@ export const getDefaultEditorState = (): Omit<
   | 'setEditing'
   | 'setLoading'
   | 'setDraftPassword'
+  | 'savePassword'
   | 'setDeleteModalOpen'
   | 'setCreateFieldModalOpen'
   | 'setIntegrationModalOpen'
+  | 'setExposedPasswordModalOpen'
 > => ({
   selectedPassword: null,
   isEditing: false,
@@ -34,9 +41,10 @@ export const getDefaultEditorState = (): Omit<
   isDeleteModalOpen: false,
   isCreateFieldModalOpen: false,
   isIntegrationModalOpen: false,
+  isExposedPasswordModalOpen: false,
 });
 
-const useEditorStore = create<EditorState>((set) => ({
+const useEditorStore = create<EditorState>((set, get) => ({
   ...getDefaultEditorState(),
   setSelectedPassword(selectedPassword) {
     set({ selectedPassword, isEditing: false, draftPassword: selectedPassword || undefined });
@@ -57,6 +65,31 @@ const useEditorStore = create<EditorState>((set) => ({
       }));
     }
   },
+  async savePassword() {
+    const draftPassword = get().draftPassword;
+
+    if (!draftPassword) {
+      return;
+    }
+
+    if (JSON.stringify(draftPassword) === JSON.stringify(get().selectedPassword)) {
+      set({ isEditing: false });
+      return;
+    }
+
+    set({ isLoading: true });
+
+    try {
+      await api.update(draftPassword._id, {
+        name: draftPassword.name,
+        credentials: draftPassword.credentials,
+        website: draftPassword.website,
+      });
+      usePasswordsStore.getState().fetch(usePasswordsStore.getState().query);
+    } finally {
+      set({ isEditing: false, isLoading: false, selectedPassword: null });
+    }
+  },
   setDeleteModalOpen(isDeleteModalOpen) {
     set({ isDeleteModalOpen });
   },
@@ -65,6 +98,9 @@ const useEditorStore = create<EditorState>((set) => ({
   },
   setIntegrationModalOpen(isIntegrationModalOpen) {
     set({ isIntegrationModalOpen });
+  },
+  setExposedPasswordModalOpen(isExposedPasswordModalOpen) {
+    set({ isExposedPasswordModalOpen });
   },
 }));
 
