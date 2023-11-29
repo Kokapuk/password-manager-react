@@ -47,12 +47,27 @@
   .container:hover &,
   .container:focus-within & {
     opacity: 1;
-    pointer-events: visible;
+
+    @include tabletAndMobile {
+      animation: enablePointerEvents $transition-duration forwards;
+    }
   }
 
   .button {
     font-size: 17px !important;
     color: rgba(255, 255, 255, 0.5);
     background-color: transparent !important;
+  }
+}
+
+@keyframes enablePointerEvents {
+  0% {
+    pointer-events: none;
+  }
+  99% {
+    pointer-events: none;
+  }
+  100% {
+    pointer-events: visible;
   }
 }
